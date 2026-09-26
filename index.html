@@ -1,1132 +1,1200 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>FOKUS // COMMAND CENTER</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #080909;
-      --panel: #0d0f0f;
-      --panel-light: #111414;
-      --line: #292d2d;
-      --text: #ece8df;
-      --muted: #777b78;
-
-      --orange: #ff542e;
-      --orange-soft: #ff795c;
-      --green: #8cff96;
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 80% 0%, rgba(255,84,46,.08), transparent 30%),
-        radial-gradient(circle at 10% 80%, rgba(255,84,46,.04), transparent 30%),
-        var(--bg);
-
-      color: var(--text);
-      font-family: "Courier New", monospace;
-      overflow-x: hidden;
-    }
-
-    /* SCANLINE EFFECT */
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 999;
-
-      background:
-        repeating-linear-gradient(
-          0deg,
-          rgba(255,255,255,.012),
-          rgba(255,255,255,.012) 1px,
-          transparent 1px,
-          transparent 3px
-        );
-    }
-
-    .app {
-      width: min(1600px, 96%);
-      margin: auto;
-      padding: 25px 0 50px;
-    }
-
-    /* HEADER */
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 18px;
-      margin-bottom: 12px;
-    }
-
-    .logo {
-      font-size: 18px;
-      letter-spacing: 4px;
-      font-weight: bold;
-    }
-
-    .logo span {
-      color: var(--orange);
-    }
-
-    .system {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 2px;
-    }
-
-    .online {
-      color: var(--green);
-    }
-
-    .online::before {
-      content: "";
-      display: inline-block;
-
-      width: 7px;
-      height: 7px;
-
-      background: var(--green);
-      border-radius: 50%;
-      margin-right: 7px;
-
-      box-shadow: 0 0 12px var(--green);
-
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      50% {
-        opacity: .35;
-      }
-    }
-
-    /* TOP TICKER */
-
-    .ticker {
-      overflow: hidden;
-      white-space: nowrap;
-
-      border-bottom: 1px solid var(--line);
-      padding: 9px 0;
-
-      color: #777;
-      font-size: 10px;
-      letter-spacing: 2px;
-    }
-
-    .ticker-content {
-      display: inline-block;
-      animation: ticker 30s linear infinite;
-    }
-
-    .ticker strong {
-      color: var(--orange);
-    }
-
-    @keyframes ticker {
-      from {
-        transform: translateX(100vw);
-      }
-
-      to {
-        transform: translateX(-100%);
-      }
-    }
-
-    /* WELCOME */
-
-    .welcome {
-      padding: 45px 5px 30px;
-    }
-
-    .eyebrow {
-      color: var(--orange);
-      font-size: 10px;
-      letter-spacing: 4px;
-      margin-bottom: 12px;
-    }
-
-    h1 {
-      font-size: clamp(30px, 4vw, 58px);
-      letter-spacing: -2px;
-      font-weight: 500;
-    }
-
-    .welcome p {
-      color: var(--muted);
-      margin-top: 10px;
-      font-size: 12px;
-      letter-spacing: 1px;
-    }
-
-    /* GRID */
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 10px;
-    }
-
-    .panel {
-      position: relative;
-      overflow: hidden;
-
-      background:
-        linear-gradient(
-          135deg,
-          rgba(255,255,255,.018),
-          transparent
-        ),
-        var(--panel);
-
-      border: 1px solid var(--line);
-      padding: 20px;
-
-      min-height: 170px;
-
-      transition:
-        border-color .25s ease,
-        transform .25s ease,
-        box-shadow .25s ease;
-    }
-
-    .panel:hover {
-      border-color: rgba(255,84,46,.6);
-      transform: translateY(-2px);
-
-      box-shadow:
-        0 0 30px rgba(255,84,46,.05);
-    }
-
-    .panel::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-
-      width: 35px;
-      height: 2px;
-
-      background: var(--orange);
-      box-shadow: 0 0 12px var(--orange);
-    }
-
-    .panel-title {
-      display: flex;
-      justify-content: space-between;
-
-      color: #969995;
-
-      font-size: 10px;
-      letter-spacing: 3px;
-
-      margin-bottom: 22px;
-    }
-
-    .panel-code {
-      color: #4b4f4d;
-    }
-
-    /* STATS */
-
-    .youtube {
-      grid-column: span 4;
-    }
-
-    .beatstars {
-      grid-column: span 4;
-    }
-
-    .mail {
-      grid-column: span 4;
-    }
-
-    .big-number {
-      font-size: clamp(30px, 4vw, 52px);
-      letter-spacing: -3px;
-    }
-
-    .unit {
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 2px;
-      margin-left: 6px;
-    }
-
-    .change {
-      color: var(--green);
-      font-size: 11px;
-      margin-top: 7px;
-    }
-
-    .mini-stats {
-      display: flex;
-      gap: 25px;
-
-      margin-top: 25px;
-      padding-top: 15px;
-
-      border-top: 1px solid var(--line);
-    }
-
-    .mini-value {
-      font-size: 15px;
-    }
-
-    .mini-label {
-      color: #555a57;
-      font-size: 8px;
-      letter-spacing: 2px;
-      margin-top: 5px;
-    }
-
-    /* ACTIVITY */
-
-    .activity {
-      grid-column: span 7;
-      min-height: 310px;
-    }
-
-    .activity-row {
-      display: grid;
-      grid-template-columns: 70px 120px 1fr;
-
-      padding: 12px 0;
-      border-bottom: 1px solid #1b1e1d;
-
-      font-size: 11px;
-    }
-
-    .activity-time {
-      color: #555;
-    }
-
-    .activity-source {
-      color: var(--orange);
-    }
-
-    .activity-text {
-      color: #b3b5b1;
-    }
-
-    /* STATUS CIRCLE */
-
-    .status {
-      grid-column: span 5;
-      min-height: 310px;
-
-      display: flex;
-      flex-direction: column;
-    }
-
-    .core {
-      flex: 1;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .circle {
-      position: relative;
-
-      width: 155px;
-      height: 155px;
-
-      border-radius: 50%;
-
-      border: 1px solid #3b302d;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(255,84,46,.15),
-          transparent 58%
-        );
-
-      box-shadow:
-        inset 0 0 35px rgba(255,84,46,.06),
-        0 0 35px rgba(255,84,46,.04);
-
-      animation: rotateGlow 4s ease-in-out infinite;
-    }
-
-    .circle::before {
-      content: "";
-
-      position: absolute;
-      inset: 12px;
-
-      border-radius: 50%;
-
-      border-top: 2px solid var(--orange);
-      border-right: 1px solid transparent;
-
-      animation: spin 6s linear infinite;
-    }
-
-    .circle::after {
-      content: "";
-
-      position: absolute;
-      inset: -10px;
-
-      border-radius: 50%;
-      border: 1px dashed #382a27;
-
-      animation: spinReverse 18s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes spinReverse {
-      to {
-        transform: rotate(-360deg);
-      }
-    }
-
-    @keyframes rotateGlow {
-      50% {
-        box-shadow:
-          inset 0 0 45px rgba(255,84,46,.1),
-          0 0 45px rgba(255,84,46,.1);
-      }
-    }
-
-    .circle-content {
-      text-align: center;
-      z-index: 2;
-    }
-
-    .circle-number {
-      font-size: 34px;
-      color: var(--orange-soft);
-
-      text-shadow:
-        0 0 20px rgba(255,84,46,.5);
-    }
-
-    .circle-label {
-      color: #666;
-      font-size: 8px;
-      letter-spacing: 3px;
-      margin-top: 4px;
-    }
-
-    /* JARVIS */
-
-    .jarvis {
-      grid-column: span 8;
-      min-height: 260px;
-    }
-
-    .jarvis-message {
-      color: #bbb;
-      font-size: 13px;
-      line-height: 1.9;
-      max-width: 750px;
-    }
-
-    .jarvis-message strong {
-      color: var(--orange-soft);
-      font-weight: normal;
-    }
-
-    .cursor {
-      display: inline-block;
-      width: 7px;
-      height: 13px;
-
-      background: var(--orange);
-
-      vertical-align: middle;
-
-      animation: blink 1s infinite;
-    }
-
-    @keyframes blink {
-      50% {
-        opacity: 0;
-      }
-    }
-
-    /* QUICK ACTIONS */
-
-    .actions {
-      grid-column: span 4;
-    }
-
-    button {
-      width: 100%;
-
-      background: transparent;
-      border: 1px solid #292d2b;
-
-      color: #aaa;
-
-      padding: 12px 15px;
-      margin-bottom: 8px;
-
-      font-family: inherit;
-      font-size: 9px;
-      letter-spacing: 2px;
-
-      text-align: left;
-
-      cursor: pointer;
-
-      transition: .2s;
-    }
-
-    button:hover {
-      color: white;
-      border-color: var(--orange);
-
-      background:
-        rgba(255,84,46,.07);
-
-      padding-left: 20px;
-
-      box-shadow:
-        inset 3px 0 0 var(--orange);
-    }
-
-    /* COMMAND BAR */
-
-    .command {
-      margin-top: 10px;
-
-      border: 1px solid #363a38;
-
-      display: flex;
-      align-items: center;
-
-      padding: 6px;
-
-      background: #090b0a;
-
-      box-shadow:
-        0 0 30px rgba(255,84,46,.03);
-    }
-
-    .command-prefix {
-      color: var(--orange);
-      padding: 0 15px;
-
-      font-size: 17px;
-    }
-
-    .command input {
-      flex: 1;
-
-      background: transparent;
-      border: none;
-      outline: none;
-
-      color: white;
-
-      font-family: inherit;
-      letter-spacing: 1px;
-
-      padding: 14px 5px;
-    }
-
-    .command input::placeholder {
-      color: #3f4341;
-    }
-
-    .send {
-      width: auto;
-      margin: 0;
-
-      color: var(--orange);
-      border-color: #322724;
-    }
-
-    /* STARTUP */
-
-    .boot {
-      position: fixed;
-      inset: 0;
-      z-index: 5000;
-
-      background: #050606;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      transition:
-        opacity .8s ease,
-        visibility .8s ease;
-    }
-
-    .boot.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
-
-    .boot-inner {
-      width: min(500px, 80%);
-    }
-
-    .boot-title {
-      letter-spacing: 5px;
-      font-size: 13px;
-      margin-bottom: 20px;
-    }
-
-    .boot-title span {
-      color: var(--orange);
-    }
-
-    .boot-bar {
-      height: 2px;
-      background: #191b1a;
-      overflow: hidden;
-    }
-
-    .boot-progress {
-      width: 0%;
-      height: 100%;
-
-      background: var(--orange);
-
-      box-shadow:
-        0 0 15px var(--orange);
-
-      animation: boot 2s forwards;
-    }
-
-    .boot-text {
-      color: #555;
-
-      font-size: 9px;
-      letter-spacing: 2px;
-
-      margin-top: 12px;
-    }
-
-    @keyframes boot {
-      to {
-        width: 100%;
-      }
-    }
-
-    /* MOBILE */
-
-    @media(max-width: 850px) {
-
-      .youtube,
-      .beatstars,
-      .mail,
-      .activity,
-      .status,
-      .jarvis,
-      .actions {
-        grid-column: span 12;
-      }
-
-      header {
-        align-items: flex-start;
-      }
-
-      .system {
-        display: none;
-      }
-
-      .activity-row {
-        grid-template-columns: 55px 90px 1fr;
-      }
-    }
-
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FOKUS // COMMAND CENTER</title>
+
+<style>
+:root{
+  --bg:#050706;
+  --panel:#090c0b;
+  --panel2:#0d100f;
+  --line:#252b28;
+  --line2:#171b19;
+  --orange:#ff8a00;
+  --orange2:#ffad33;
+  --orangeDim:rgba(255,138,0,.16);
+  --text:#e6e7e3;
+  --muted:#68706b;
+  --green:#74ff9d;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 75% -10%,rgba(255,138,0,.09),transparent 28%),
+    linear-gradient(180deg,#070908,#030504);
+  color:var(--text);
+  font-family:"Courier New",monospace;
+  overflow-x:hidden;
+}
+
+/* SCREEN TEXTURE */
+body:after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9999;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,.013) 0,
+      rgba(255,255,255,.013) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  opacity:.55;
+}
+
+.app{
+  width:min(1800px,97%);
+  margin:auto;
+  padding:18px 0 35px;
+}
+
+/* HEADER */
+header{
+  height:56px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  letter-spacing:4px;
+  font-weight:bold;
+  font-size:17px;
+}
+
+.logo b{color:var(--orange)}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:24px;
+  color:var(--muted);
+  font-size:9px;
+  letter-spacing:2px;
+}
+
+.online{color:var(--green)}
+
+.online:before{
+  content:"";
+  width:6px;height:6px;
+  display:inline-block;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 12px var(--green);
+  margin-right:7px;
+  animation:pulse 1.6s infinite;
+}
+
+@keyframes pulse{50%{opacity:.25}}
+
+/* DATA TICKER */
+.ticker{
+  border-bottom:1px solid var(--line);
+  height:31px;
+  overflow:hidden;
+  white-space:nowrap;
+  font-size:9px;
+  letter-spacing:2px;
+  color:#5d635f;
+  display:flex;
+  align-items:center;
+}
+
+.ticker-track{
+  display:inline-block;
+  animation:ticker 35s linear infinite;
+}
+
+.ticker b{
+  color:var(--orange);
+  font-weight:normal;
+}
+
+@keyframes ticker{
+  from{transform:translateX(100vw)}
+  to{transform:translateX(-100%)}
+}
+
+/* INTRO */
+.intro{
+  padding:31px 2px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+}
+
+.overline{
+  color:var(--orange);
+  letter-spacing:4px;
+  font-size:9px;
+  margin-bottom:8px;
+}
+
+h1{
+  font-weight:400;
+  font-size:clamp(27px,3vw,45px);
+  letter-spacing:-2px;
+}
+
+.intro p{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:9px;
+  letter-spacing:2px;
+}
+
+.classified{
+  text-align:right;
+  color:#464c48;
+  font-size:8px;
+  letter-spacing:2px;
+  line-height:1.8;
+}
+
+.classified b{color:var(--orange)}
+
+/* GRIDS */
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.main-grid{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.lower-grid{
+  display:grid;
+  grid-template-columns:1.3fr .7fr;
+  gap:8px;
+}
+
+/* PANEL */
+.panel{
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.018),transparent 40%),
+    var(--panel);
+  border:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+  padding:17px;
+}
+
+.panel:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:30px;
+  height:2px;
+  background:var(--orange);
+  box-shadow:0 0 12px var(--orange);
+}
+
+.panel:hover{
+  border-color:rgba(255,138,0,.45);
+  box-shadow:0 0 30px rgba(255,138,0,.035);
+}
+
+.panel-head{
+  display:flex;
+  justify-content:space-between;
+  font-size:8px;
+  letter-spacing:2.5px;
+  color:#8b918d;
+  margin-bottom:17px;
+}
+
+.code{color:#444a46}
+
+.value{
+  font-size:31px;
+  letter-spacing:-2px;
+}
+
+.label{
+  color:var(--muted);
+  font-size:8px;
+  letter-spacing:2px;
+  margin-left:5px;
+}
+
+.positive{
+  margin-top:5px;
+  color:var(--green);
+  font-size:8px;
+  letter-spacing:1px;
+}
+
+/* SERVICE CARDS */
+.service{
+  min-height:205px;
+}
+
+.service-bottom{
+  position:absolute;
+  left:17px;
+  right:17px;
+  bottom:15px;
+  border-top:1px solid var(--line2);
+  padding-top:11px;
+  display:flex;
+  gap:25px;
+}
+
+.micro-number{font-size:12px}
+
+.micro-label{
+  color:#4d544f;
+  font-size:7px;
+  letter-spacing:1.5px;
+  margin-top:3px;
+}
+
+/* MINI CHART */
+.spark{
+  width:100%;
+  height:43px;
+  margin-top:13px;
+}
+
+.spark polyline{
+  fill:none;
+  stroke:var(--orange);
+  stroke-width:1.4;
+  filter:drop-shadow(0 0 4px rgba(255,138,0,.45));
+}
+
+.spark .gridline{
+  stroke:#202522;
+  stroke-width:.6;
+}
+
+/* MAIL */
+.mail{
+  min-height:122px;
+}
+
+.mail-main{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+}
+
+.mail-count{
+  font-size:27px;
+}
+
+.mail-info{
+  color:#59605c;
+  font-size:7px;
+  letter-spacing:1.5px;
+  line-height:1.8;
+  text-align:right;
+}
+
+.mail-info b{
+  color:var(--orange2);
+  font-weight:normal;
+}
+
+/* AI CORE */
+.ai-core{
+  min-height:455px;
+  padding:0;
+}
+
+.ai-core .panel-head{
+  padding:17px 17px 0;
+  position:relative;
+  z-index:4;
+}
+
+#neuralCanvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+
+.core-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  pointer-events:none;
+}
+
+.core-center{
+  width:128px;
+  height:128px;
+  border-radius:50%;
+  border:1px solid rgba(255,138,0,.28);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(circle,rgba(255,138,0,.15),rgba(5,7,6,.8) 63%);
+  box-shadow:
+    0 0 40px rgba(255,138,0,.12),
+    inset 0 0 25px rgba(255,138,0,.1);
+}
+
+.core-center:before{
+  content:"";
+  position:absolute;
+  width:157px;
+  height:157px;
+  border-radius:50%;
+  border:1px dashed rgba(255,138,0,.22);
+  animation:rotate 18s linear infinite;
+}
+
+.core-center:after{
+  content:"";
+  position:absolute;
+  width:181px;
+  height:181px;
+  border-radius:50%;
+  border-top:1px solid var(--orange);
+  border-left:1px solid transparent;
+  animation:rotateReverse 9s linear infinite;
+}
+
+@keyframes rotate{to{transform:rotate(360deg)}}
+@keyframes rotateReverse{to{transform:rotate(-360deg)}}
+
+.ai-name{
+  color:var(--orange2);
+  font-size:18px;
+  letter-spacing:3px;
+  text-shadow:0 0 14px rgba(255,138,0,.8);
+}
+
+.ai-state{
+  margin-top:7px;
+  font-size:7px;
+  letter-spacing:2px;
+  color:var(--green);
+}
+
+.core-data{
+  position:absolute;
+  bottom:15px;
+  left:17px;
+  right:17px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--line);
+  padding-top:11px;
+  z-index:3;
+}
+
+.core-data div{
+  font-size:7px;
+  color:#505752;
+  letter-spacing:1px;
+}
+
+.core-data b{
+  display:block;
+  color:#9da19e;
+  font-size:10px;
+  margin-top:4px;
+  font-weight:normal;
+}
+
+/* ANALYTICS */
+.analytics{
+  min-height:455px;
+}
+
+.chart-wrap{
+  height:210px;
+  margin-top:10px;
+  position:relative;
+  border-left:1px solid #222724;
+  border-bottom:1px solid #222724;
+}
+
+#analyticsChart{
+  width:100%;
+  height:100%;
+}
+
+.chart-legend{
+  display:flex;
+  gap:22px;
+  margin-top:13px;
+  font-size:7px;
+  letter-spacing:1.5px;
+  color:#5c625e;
+}
+
+.dot{
+  width:5px;height:5px;
+  display:inline-block;
+  border-radius:50%;
+  margin-right:5px;
+}
+
+.dot.orange{background:var(--orange)}
+.dot.gray{background:#737975}
+.dot.green{background:var(--green)}
+
+.analytics-numbers{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  margin-top:24px;
+  border-top:1px solid var(--line2);
+}
+
+.metric{
+  padding:14px 8px 0 0;
+}
+
+.metric-value{
+  font-size:17px;
+}
+
+.metric-label{
+  font-size:7px;
+  color:#505652;
+  letter-spacing:1.5px;
+  margin-top:5px;
+}
+
+/* ACTIVITY */
+.activity{
+  min-height:265px;
+}
+
+.activity-row{
+  display:grid;
+  grid-template-columns:55px 100px 1fr 55px;
+  padding:10px 0;
+  border-bottom:1px solid var(--line2);
+  font-size:8px;
+  letter-spacing:.5px;
+}
+
+.time{color:#444a46}
+.source{color:var(--orange)}
+.event{color:#9a9f9b}
+.tag{text-align:right;color:#59605b}
+
+/* JARVIS BRIEFING */
+.brief{
+  min-height:265px;
+}
+
+.brief-text{
+  color:#969c98;
+  font-size:10px;
+  line-height:1.9;
+}
+
+.brief-text b{
+  color:var(--orange2);
+  font-weight:normal;
+}
+
+.cursor{
+  display:inline-block;
+  width:6px;
+  height:11px;
+  background:var(--orange);
+  margin-left:4px;
+  vertical-align:middle;
+  animation:blink 1s infinite;
+}
+
+@keyframes blink{50%{opacity:0}}
+
+/* COMMAND */
+.command{
+  margin-top:8px;
+  min-height:57px;
+  display:flex;
+  align-items:center;
+  border:1px solid #303632;
+  background:#070908;
+  position:relative;
+}
+
+.command:before{
+  content:"COMMAND INPUT";
+  position:absolute;
+  top:-5px;
+  left:14px;
+  padding:0 7px;
+  background:var(--bg);
+  color:#464c48;
+  font-size:7px;
+  letter-spacing:2px;
+}
+
+.prompt{
+  color:var(--orange);
+  padding:0 14px;
+  text-shadow:0 0 10px var(--orange);
+}
+
+.command input{
+  flex:1;
+  background:none;
+  border:0;
+  outline:0;
+  color:white;
+  font-family:inherit;
+  letter-spacing:1.5px;
+  font-size:10px;
+  padding:18px 0;
+}
+
+.command input::placeholder{color:#3d433f}
+
+.mic{
+  border:0;
+  border-left:1px solid var(--line);
+  background:transparent;
+  color:var(--orange);
+  height:35px;
+  padding:0 18px;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:9px;
+  letter-spacing:1px;
+}
+
+.execute{
+  height:35px;
+  margin-right:9px;
+  border:1px solid rgba(255,138,0,.35);
+  background:rgba(255,138,0,.05);
+  color:var(--orange);
+  padding:0 18px;
+  font-family:inherit;
+  font-size:8px;
+  letter-spacing:1.5px;
+  cursor:pointer;
+}
+
+.execute:hover{
+  background:rgba(255,138,0,.13);
+  box-shadow:0 0 15px rgba(255,138,0,.08);
+}
+
+/* BOOT */
+.boot{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:#030504;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  transition:opacity .8s,visibility .8s;
+}
+
+.boot.hidden{
+  opacity:0;
+  visibility:hidden;
+}
+
+.bootbox{
+  width:min(520px,80%);
+}
+
+.boot-title{
+  font-size:12px;
+  letter-spacing:5px;
+}
+
+.boot-title b{color:var(--orange)}
+
+.boot-status{
+  margin-top:13px;
+  color:#4f5551;
+  font-size:8px;
+  letter-spacing:2px;
+}
+
+.boot-line{
+  height:2px;
+  background:#181b19;
+  margin-top:18px;
+  overflow:hidden;
+}
+
+.boot-progress{
+  height:100%;
+  width:0;
+  background:var(--orange);
+  box-shadow:0 0 15px var(--orange);
+  animation:load 2.2s forwards;
+}
+
+@keyframes load{to{width:100%}}
+
+/* RESPONSIVE */
+@media(max-width:950px){
+  .grid3,.main-grid,.lower-grid{
+    grid-template-columns:1fr;
+  }
+  .header-right{display:none}
+  .classified{display:none}
+  .ai-core,.analytics{min-height:400px}
+}
+</style>
 </head>
-
 
 <body>
 
-  <!-- STARTUP SCREEN -->
+<div class="boot" id="boot">
+  <div class="bootbox">
+    <div class="boot-title">FOKUS <b>//</b> INTELLIGENCE SYSTEM</div>
+    <div class="boot-status" id="bootStatus">INITIALIZING SECURE ENVIRONMENT...</div>
+    <div class="boot-line"><div class="boot-progress"></div></div>
+  </div>
+</div>
 
-  <div class="boot" id="boot">
-    <div class="boot-inner">
+<div class="app">
 
-      <div class="boot-title">
-        FOKUS <span>//</span> COMMAND CENTER
-      </div>
+<header>
+  <div class="logo">FOKUS <b>//</b> COMMAND CENTER</div>
 
-      <div class="boot-bar">
-        <div class="boot-progress"></div>
-      </div>
+  <div class="header-right">
+    <span>NODE: BERLIN-01</span>
+    <span id="clock">00:00:00</span>
+    <span class="online">SECURE CONNECTION</span>
+  </div>
+</header>
 
-      <div class="boot-text" id="bootText">
-        INITIALIZING SYSTEM...
-      </div>
+<div class="ticker">
+  <div class="ticker-track">
+    NETWORK <b>SECURE</b> &nbsp;//&nbsp;
+    YT-01 <b>+12</b> &nbsp;//&nbsp;
+    YT-02 <b>+04</b> &nbsp;//&nbsp;
+    BEATSTARS <b>+184 PLAYS</b> &nbsp;//&nbsp;
+    MAIL NODES <b>03 ACTIVE</b> &nbsp;//&nbsp;
+    AI CORE <b>ONLINE</b> &nbsp;//&nbsp;
+    THREAT LEVEL <b>ZERO</b>
+  </div>
+</div>
 
+<section class="intro">
+  <div>
+    <div class="overline">// INTELLIGENCE OVERVIEW</div>
+    <h1 id="greeting">GOOD EVENING.</h1>
+    <p>ALL SYSTEMS OPERATIONAL // LIVE DATA ENVIRONMENT</p>
+  </div>
+
+  <div class="classified">
+    ACCESS LEVEL <b>ALPHA</b><br>
+    SESSION ENCRYPTED<br>
+    FOKUS INTELLIGENCE NETWORK
+  </div>
+</section>
+
+
+<!-- SERVICES -->
+<div class="grid3">
+
+<section class="panel service">
+  <div class="panel-head">
+    <span>YOUTUBE // CHANNEL 01</span>
+    <span class="code">YT-A01</span>
+  </div>
+
+  <span class="value">327</span>
+  <span class="label">SUBSCRIBERS</span>
+  <div class="positive">▲ +12 // 24H</div>
+
+  <svg class="spark" viewBox="0 0 300 43" preserveAspectRatio="none">
+    <line class="gridline" x1="0" y1="21" x2="300" y2="21"/>
+    <polyline points="0,34 22,31 42,32 65,25 88,28 110,18 132,21 155,14 178,19 200,10 222,13 244,7 270,11 300,4"/>
+  </svg>
+
+  <div class="service-bottom">
+    <div><div class="micro-number">1,842</div><div class="micro-label">VIEWS // 24H</div></div>
+    <div><div class="micro-number">51%</div><div class="micro-label">RETENTION</div></div>
+    <div><div class="micro-number">+8.2%</div><div class="micro-label">GROWTH</div></div>
+  </div>
+</section>
+
+
+<section class="panel service">
+  <div class="panel-head">
+    <span>YOUTUBE // CHANNEL 02</span>
+    <span class="code">YT-A02</span>
+  </div>
+
+  <span class="value">1.08K</span>
+  <span class="label">SUBSCRIBERS</span>
+  <div class="positive">▲ +04 // 24H</div>
+
+  <svg class="spark" viewBox="0 0 300 43" preserveAspectRatio="none">
+    <line class="gridline" x1="0" y1="21" x2="300" y2="21"/>
+    <polyline points="0,30 25,29 50,25 72,27 96,21 120,23 145,17 170,19 194,15 220,16 244,10 270,12 300,8"/>
+  </svg>
+
+  <div class="service-bottom">
+    <div><div class="micro-number">3,201</div><div class="micro-label">VIEWS // 24H</div></div>
+    <div><div class="micro-number">44%</div><div class="micro-label">RETENTION</div></div>
+    <div><div class="micro-number">+3.1%</div><div class="micro-label">GROWTH</div></div>
+  </div>
+</section>
+
+
+<section class="panel service">
+  <div class="panel-head">
+    <span>BEATSTARS // MARKET NODE</span>
+    <span class="code">BS-M01</span>
+  </div>
+
+  <span class="value">12.4K</span>
+  <span class="label">PLAYS</span>
+  <div class="positive">▲ +184 // 24H</div>
+
+  <svg class="spark" viewBox="0 0 300 43" preserveAspectRatio="none">
+    <line class="gridline" x1="0" y1="21" x2="300" y2="21"/>
+    <polyline points="0,36 20,29 40,33 62,18 82,25 102,11 124,20 145,9 166,16 188,6 210,14 233,8 255,12 280,5 300,7"/>
+  </svg>
+
+  <div class="service-bottom">
+    <div><div class="micro-number">€84</div><div class="micro-label">REVENUE</div></div>
+    <div><div class="micro-number">02</div><div class="micro-label">SALES</div></div>
+    <div><div class="micro-number">+11%</div><div class="micro-label">PLAYS</div></div>
+  </div>
+</section>
+
+</div>
+
+
+<!-- MAIL -->
+<div class="grid3">
+
+<section class="panel mail">
+  <div class="panel-head">
+    <span>MAIL // STUDIO</span>
+    <span class="code">MX-01</span>
+  </div>
+  <div class="mail-main">
+    <div><span class="mail-count">03</span><span class="label">NEW</span></div>
+    <div class="mail-info"><b>01 IMPORTANT</b><br>LAST SYNC 20:51</div>
+  </div>
+</section>
+
+<section class="panel mail">
+  <div class="panel-head">
+    <span>MAIL // BUSINESS</span>
+    <span class="code">MX-02</span>
+  </div>
+  <div class="mail-main">
+    <div><span class="mail-count">02</span><span class="label">NEW</span></div>
+    <div class="mail-info"><b>01 IMPORTANT</b><br>LAST SYNC 20:51</div>
+  </div>
+</section>
+
+<section class="panel mail">
+  <div class="panel-head">
+    <span>MAIL // PRIMARY</span>
+    <span class="code">MX-03</span>
+  </div>
+  <div class="mail-main">
+    <div><span class="mail-count">02</span><span class="label">NEW</span></div>
+    <div class="mail-info">00 IMPORTANT<br>LAST SYNC 20:51</div>
+  </div>
+</section>
+
+</div>
+
+
+<!-- AI + ANALYTICS -->
+<div class="main-grid">
+
+<section class="panel ai-core">
+
+  <div class="panel-head">
+    <span>NEURAL INTELLIGENCE CORE // JARVIS</span>
+    <span class="code">AI-NX01</span>
+  </div>
+
+  <canvas id="neuralCanvas"></canvas>
+
+  <div class="core-overlay">
+    <div class="core-center">
+      <div class="ai-name">JARVIS</div>
+      <div class="ai-state">● LISTENING</div>
     </div>
   </div>
 
-
-  <div class="app">
-
-    <!-- HEADER -->
-
-    <header>
-
-      <div class="logo">
-        FOKUS <span>//</span> COMMAND CENTER
-      </div>
-
-      <div class="system">
-        <span id="clock">00:00:00</span>
-        <span>BERLIN</span>
-        <span class="online">SYSTEM ONLINE</span>
-      </div>
-
-    </header>
-
-
-    <!-- TICKER -->
-
-    <div class="ticker">
-
-      <div class="ticker-content">
-        YOUTUBE <strong>+12 SUBS</strong>
-        &nbsp;&nbsp;//&nbsp;&nbsp;
-
-        BEATSTARS <strong>+184 PLAYS</strong>
-        &nbsp;&nbsp;//&nbsp;&nbsp;
-
-        MAIL <strong>07 NEW</strong>
-        &nbsp;&nbsp;//&nbsp;&nbsp;
-
-        REVENUE <strong>+84.00 EUR</strong>
-        &nbsp;&nbsp;//&nbsp;&nbsp;
-
-        SYSTEM <strong>ONLINE</strong>
-      </div>
-
-    </div>
-
-
-    <!-- WELCOME -->
-
-    <section class="welcome">
-
-      <div class="eyebrow">
-        // DAILY OVERVIEW
-      </div>
-
-      <h1 id="greeting">
-        GOOD EVENING.
-      </h1>
-
-      <p>
-        SYSTEM READY — HERE'S WHAT HAPPENED TODAY.
-      </p>
-
-    </section>
-
-
-    <!-- DASHBOARD -->
-
-    <main class="grid">
-
-
-      <!-- YOUTUBE -->
-
-      <section class="panel youtube">
-
-        <div class="panel-title">
-          <span>YOUTUBE</span>
-          <span class="panel-code">YT-01</span>
-        </div>
-
-        <div>
-          <span class="big-number">327</span>
-          <span class="unit">SUBSCRIBERS</span>
-        </div>
-
-        <div class="change">
-          ↑ +12 TODAY
-        </div>
-
-        <div class="mini-stats">
-
-          <div>
-            <div class="mini-value">1,842</div>
-            <div class="mini-label">VIEWS TODAY</div>
-          </div>
-
-          <div>
-            <div class="mini-value">51%</div>
-            <div class="mini-label">AVG. RETENTION</div>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- BEATSTARS -->
-
-      <section class="panel beatstars">
-
-        <div class="panel-title">
-          <span>BEATSTARS</span>
-          <span class="panel-code">BS-01</span>
-        </div>
-
-        <div>
-          <span class="big-number">12.4K</span>
-          <span class="unit">PLAYS</span>
-        </div>
-
-        <div class="change">
-          ↑ +184 TODAY
-        </div>
-
-        <div class="mini-stats">
-
-          <div>
-            <div class="mini-value">€84.00</div>
-            <div class="mini-label">REVENUE</div>
-          </div>
-
-          <div>
-            <div class="mini-value">02</div>
-            <div class="mini-label">SALES</div>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- MAIL -->
-
-      <section class="panel mail">
-
-        <div class="panel-title">
-          <span>MAIL CENTER</span>
-          <span class="panel-code">MX-03</span>
-        </div>
-
-        <div>
-          <span class="big-number">07</span>
-          <span class="unit">NEW</span>
-        </div>
-
-        <div class="change">
-          02 IMPORTANT
-        </div>
-
-        <div class="mini-stats">
-
-          <div>
-            <div class="mini-value">03</div>
-            <div class="mini-label">STUDIO</div>
-          </div>
-
-          <div>
-            <div class="mini-value">02</div>
-            <div class="mini-label">BUSINESS</div>
-          </div>
-
-          <div>
-            <div class="mini-value">02</div>
-            <div class="mini-label">OTHER</div>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ACTIVITY -->
-
-      <section class="panel activity">
-
-        <div class="panel-title">
-          <span>LIVE ACTIVITY</span>
-          <span class="panel-code">FEED-01</span>
-        </div>
-
-        <div class="activity-row">
-          <span class="activity-time">19:42</span>
-          <span class="activity-source">YOUTUBE</span>
-          <span class="activity-text">New subscriber detected</span>
-        </div>
-
-        <div class="activity-row">
-          <span class="activity-time">18:31</span>
-          <span class="activity-source">BEATSTARS</span>
-          <span class="activity-text">New message received</span>
-        </div>
-
-        <div class="activity-row">
-          <span class="activity-time">16:04</span>
-          <span class="activity-source">MAIL</span>
-          <span class="activity-text">New studio inquiry received</span>
-        </div>
-
-        <div class="activity-row">
-          <span class="activity-time">13:27</span>
-          <span class="activity-source">BEATSTARS</span>
-          <span class="activity-text">Beat license purchased — €39.00</span>
-        </div>
-
-        <div class="activity-row">
-          <span class="activity-time">11:12</span>
-          <span class="activity-source">SYSTEM</span>
-          <span class="activity-text">Analytics synchronized successfully</span>
-        </div>
-
-      </section>
-
-
-      <!-- SYSTEM CORE -->
-
-      <section class="panel status">
-
-        <div class="panel-title">
-          <span>SYSTEM CORE</span>
-          <span class="panel-code">CORE-99</span>
-        </div>
-
-        <div class="core">
-
-          <div class="circle">
-
-            <div class="circle-content">
-              <div class="circle-number">99%</div>
-              <div class="circle-label">ONLINE</div>
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- JARVIS -->
-
-      <section class="panel jarvis">
-
-        <div class="panel-title">
-          <span>JARVIS // DAILY BRIEFING</span>
-          <span class="panel-code">AI-01</span>
-        </div>
-
-        <div class="jarvis-message">
-
-          Good evening.
-
-          <br><br>
-
-          YouTube activity is currently
-          <strong>above yesterday's performance</strong>.
-
-          BeatStars generated
-          <strong>184 new plays and two sales</strong>.
-
-          <br><br>
-
-          Seven new emails have been detected.
-          Two have been classified as important.
-
-          <br><br>
-
-          All connected systems are operational.
-
-          <span class="cursor"></span>
-
-        </div>
-
-      </section>
-
-
-      <!-- ACTIONS -->
-
-      <section class="panel actions">
-
-        <div class="panel-title">
-          <span>QUICK ACTIONS</span>
-          <span class="panel-code">CMD</span>
-        </div>
-
-        <button>▶ RUN DAILY BRIEFING</button>
-
-        <button>→ OPEN MAIL CENTER</button>
-
-        <button>→ YOUTUBE ANALYTICS</button>
-
-        <button>→ BEATSTARS ANALYTICS</button>
-
-        <button>↻ REFRESH SYSTEM</button>
-
-      </section>
-
-    </main>
-
-
-    <!-- COMMAND INPUT -->
-
-    <div class="command">
-
-      <div class="command-prefix">
-        ›
-      </div>
-
-      <input
-        type="text"
-        placeholder="ASK JARVIS..."
-      >
-
-      <button class="send">
-        EXECUTE
-      </button>
-
-    </div>
-
+  <div class="core-data">
+    <div>NEURAL NODES<b id="nodeCount">42</b></div>
+    <div>RESPONSE<b>14 MS</b></div>
+    <div>VOICE ENGINE<b>READY</b></div>
+    <div>AI STATUS<b>ONLINE</b></div>
   </div>
 
+</section>
 
-  <script>
 
-    /* CLOCK */
+<section class="panel analytics">
 
-    function updateClock() {
+  <div class="panel-head">
+    <span>LIVE ANALYTICS // 7 DAY SIGNAL</span>
+    <span class="code">DATA-X7</span>
+  </div>
 
-      const now = new Date();
+  <div class="chart-wrap">
+    <canvas id="analyticsChart"></canvas>
+  </div>
 
-      document.getElementById("clock").textContent =
-        now.toLocaleTimeString(
-          "de-DE",
-          {
-            hour12: false
-          }
-        );
+  <div class="chart-legend">
+    <span><i class="dot orange"></i>YOUTUBE 01</span>
+    <span><i class="dot gray"></i>YOUTUBE 02</span>
+    <span><i class="dot green"></i>BEATSTARS</span>
+  </div>
 
+  <div class="analytics-numbers">
+    <div class="metric"><div class="metric-value">+18.2%</div><div class="metric-label">YT01 // 7D</div></div>
+    <div class="metric"><div class="metric-value">+7.4%</div><div class="metric-label">YT02 // 7D</div></div>
+    <div class="metric"><div class="metric-value">+24.9%</div><div class="metric-label">BEATSTARS // 7D</div></div>
+  </div>
+
+</section>
+
+</div>
+
+
+<!-- LOWER -->
+<div class="lower-grid">
+
+<section class="panel activity">
+  <div class="panel-head">
+    <span>INTELLIGENCE ACTIVITY LOG</span>
+    <span class="code">LIVE FEED</span>
+  </div>
+
+  <div class="activity-row"><span class="time">20:44</span><span class="source">YT-01</span><span class="event">Subscriber event detected</span><span class="tag">LOGGED</span></div>
+  <div class="activity-row"><span class="time">19:31</span><span class="source">MX-01</span><span class="event">New studio inquiry received</span><span class="tag">PRIORITY</span></div>
+  <div class="activity-row"><span class="time">18:08</span><span class="source">BS-M01</span><span class="event">License transaction completed // €39.00</span><span class="tag">SALE</span></div>
+  <div class="activity-row"><span class="time">16:52</span><span class="source">YT-02</span><span class="event">View velocity increased +18%</span><span class="tag">SIGNAL</span></div>
+  <div class="activity-row"><span class="time">14:11</span><span class="source">SYSTEM</span><span class="event">All intelligence nodes synchronized</span><span class="tag">SECURE</span></div>
+</section>
+
+
+<section class="panel brief">
+  <div class="panel-head">
+    <span>JARVIS // INTELLIGENCE BRIEF</span>
+    <span class="code">AI REPORT</span>
+  </div>
+
+  <div class="brief-text">
+    Good evening.<br><br>
+
+    Channel 01 is showing
+    <b>increased audience activity</b>.
+
+    BeatStars generated
+    <b>184 additional plays</b> during the current cycle.<br><br>
+
+    Three mail nodes are active.
+    Two messages require attention.<br><br>
+
+    Awaiting command.<span class="cursor"></span>
+  </div>
+</section>
+
+</div>
+
+
+<div class="command">
+  <span class="prompt">›_</span>
+  <input id="commandInput" placeholder="ENTER COMMAND // ASK JARVIS..." autocomplete="off">
+  <button class="mic">◉ VOICE</button>
+  <button class="execute" id="execute">EXECUTE</button>
+</div>
+
+</div>
+
+
+<script>
+/* CLOCK */
+function clock(){
+  document.getElementById("clock").textContent =
+    new Date().toLocaleTimeString("de-DE",{hour12:false});
+}
+clock();
+setInterval(clock,1000);
+
+/* GREETING */
+const hour=new Date().getHours();
+document.getElementById("greeting").textContent =
+  hour<12 ? "GOOD MORNING." :
+  hour<18 ? "GOOD AFTERNOON." :
+  "GOOD EVENING.";
+
+/* BOOT */
+const bootStatus=document.getElementById("bootStatus");
+
+setTimeout(()=>bootStatus.textContent="AUTHENTICATING OPERATOR...",500);
+setTimeout(()=>bootStatus.textContent="LOADING NEURAL INTELLIGENCE CORE...",1050);
+setTimeout(()=>bootStatus.textContent="ESTABLISHING SECURE DATA NODES...",1550);
+setTimeout(()=>bootStatus.textContent="ACCESS GRANTED // SYSTEM ONLINE",2050);
+
+setTimeout(()=>{
+  document.getElementById("boot").classList.add("hidden");
+},2500);
+
+
+/* ==============================
+   NEURAL NETWORK ANIMATION
+================================ */
+
+const neuralCanvas=document.getElementById("neuralCanvas");
+const nctx=neuralCanvas.getContext("2d");
+
+let nodes=[];
+const NODE_COUNT=46;
+
+function resizeNeural(){
+  const rect=neuralCanvas.getBoundingClientRect();
+  const dpr=window.devicePixelRatio||1;
+
+  neuralCanvas.width=rect.width*dpr;
+  neuralCanvas.height=rect.height*dpr;
+
+  nctx.setTransform(dpr,0,0,dpr,0,0);
+
+  nodes=[];
+
+  for(let i=0;i<NODE_COUNT;i++){
+    nodes.push({
+      x:Math.random()*rect.width,
+      y:Math.random()*rect.height,
+      vx:(Math.random()-.5)*.28,
+      vy:(Math.random()-.5)*.28,
+      r:Math.random()*1.7+.7,
+      pulse:Math.random()*Math.PI*2
+    });
+  }
+
+  document.getElementById("nodeCount").textContent=NODE_COUNT;
+}
+
+function neuralAnimation(){
+  const rect=neuralCanvas.getBoundingClientRect();
+
+  nctx.clearRect(0,0,rect.width,rect.height);
+
+  /* faint radar rings */
+  const cx=rect.width/2;
+  const cy=rect.height/2;
+
+  nctx.strokeStyle="rgba(255,138,0,.045)";
+  nctx.lineWidth=1;
+
+  [95,145,200].forEach(r=>{
+    nctx.beginPath();
+    nctx.arc(cx,cy,r,0,Math.PI*2);
+    nctx.stroke();
+  });
+
+  nodes.forEach(n=>{
+    n.x+=n.vx;
+    n.y+=n.vy;
+    n.pulse+=.025;
+
+    if(n.x<0||n.x>rect.width)n.vx*=-1;
+    if(n.y<0||n.y>rect.height)n.vy*=-1;
+  });
+
+  /* synapses */
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+
+      const a=nodes[i];
+      const b=nodes[j];
+
+      const dx=a.x-b.x;
+      const dy=a.y-b.y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+
+      if(dist<105){
+
+        const opacity=(1-dist/105)*.22;
+
+        nctx.beginPath();
+        nctx.moveTo(a.x,a.y);
+        nctx.lineTo(b.x,b.y);
+
+        nctx.strokeStyle=`rgba(255,138,0,${opacity})`;
+        nctx.lineWidth=.7;
+        nctx.stroke();
+      }
+    }
+  }
+
+  /* neurons */
+  nodes.forEach(n=>{
+
+    const glow=(Math.sin(n.pulse)+1)/2;
+
+    nctx.beginPath();
+    nctx.arc(n.x,n.y,n.r+glow*.7,0,Math.PI*2);
+
+    nctx.fillStyle=`rgba(255,170,55,${.45+glow*.45})`;
+
+    nctx.shadowBlur=8+glow*7;
+    nctx.shadowColor="#ff8a00";
+
+    nctx.fill();
+
+    nctx.shadowBlur=0;
+  });
+
+  requestAnimationFrame(neuralAnimation);
+}
+
+resizeNeural();
+neuralAnimation();
+
+
+/* ==============================
+   ANALYTICS CHART
+================================ */
+
+const chart=document.getElementById("analyticsChart");
+const ctx=chart.getContext("2d");
+
+let chartPhase=0;
+
+const series=[
+  [31,38,35,49,55,51,68,73,69,84,91,88,104],
+  [42,45,43,50,48,56,59,61,65,68,70,75,78],
+  [20,29,25,37,31,46,42,58,53,69,63,82,90]
+];
+
+function drawChart(){
+
+  const rect=chart.getBoundingClientRect();
+  const dpr=window.devicePixelRatio||1;
+
+  if(chart.width!==rect.width*dpr){
+    chart.width=rect.width*dpr;
+    chart.height=rect.height*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  ctx.clearRect(0,0,rect.width,rect.height);
+
+  /* grid */
+  ctx.strokeStyle="rgba(255,255,255,.045)";
+  ctx.lineWidth=1;
+
+  for(let i=1;i<5;i++){
+    const y=(rect.height/5)*i;
+
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    ctx.lineTo(rect.width,y);
+    ctx.stroke();
+  }
+
+  const colors=[
+    "#ff8a00",
+    "#747b76",
+    "#74ff9d"
+  ];
+
+  series.forEach((data,index)=>{
+
+    ctx.beginPath();
+
+    data.forEach((v,i)=>{
+
+      const x=(rect.width/(data.length-1))*i;
+
+      const movement=
+        Math.sin(chartPhase+i*.7+index)*1.6;
+
+      const y=
+        rect.height-
+        ((v+movement)/115)*rect.height;
+
+      if(i===0)ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    });
+
+    ctx.strokeStyle=colors[index];
+    ctx.lineWidth=index===0?1.8:1.1;
+
+    if(index===0){
+      ctx.shadowBlur=8;
+      ctx.shadowColor="#ff8a00";
     }
 
-    updateClock();
+    ctx.stroke();
+    ctx.shadowBlur=0;
 
-    setInterval(
-      updateClock,
-      1000
-    );
+  });
 
+  chartPhase+=.015;
 
-    /* GREETING */
+  requestAnimationFrame(drawChart);
+}
 
-    const hour =
-      new Date().getHours();
-
-    let greeting =
-      "GOOD EVENING.";
-
-    if (hour < 12) {
-      greeting = "GOOD MORNING.";
-    }
-
-    else if (hour < 18) {
-      greeting = "GOOD AFTERNOON.";
-    }
-
-    document.getElementById(
-      "greeting"
-    ).textContent = greeting;
+drawChart();
 
 
-    /* BOOT SEQUENCE */
+/* COMMAND DEMO */
 
-    const bootText =
-      document.getElementById("bootText");
+const commandInput=document.getElementById("commandInput");
 
-    setTimeout(() => {
-      bootText.textContent =
-        "CONNECTING MODULES...";
-    }, 650);
+document.getElementById("execute").onclick=()=>{
+  if(!commandInput.value.trim())return;
 
-    setTimeout(() => {
-      bootText.textContent =
-        "LOADING COMMAND INTERFACE...";
-    }, 1300);
+  alert(
+    "JARVIS NEURAL INTERFACE\n\nCOMMAND RECEIVED:\n"+
+    commandInput.value+
+    "\n\nAI CONNECTION WILL BE ACTIVATED IN A LATER BUILD."
+  );
 
-    setTimeout(() => {
-      bootText.textContent =
-        "SYSTEM ONLINE.";
-    }, 1900);
+  commandInput.value="";
+};
 
-    setTimeout(() => {
-
-      document
-        .getElementById("boot")
-        .classList
-        .add("hidden");
-
-    }, 2400);
+commandInput.addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    document.getElementById("execute").click();
+  }
+});
 
 
-    /* BUTTON DEMO */
-
-    document
-      .querySelector(".send")
-      .addEventListener(
-        "click",
-        () => {
-
-          const input =
-            document.querySelector(
-              ".command input"
-            );
-
-          if (!input.value.trim()) {
-            return;
-          }
-
-          alert(
-            "JARVIS AI MODULE WILL PROCESS:\n\n" +
-            input.value
-          );
-
-          input.value = "";
-
-        }
-      );
-
-  </script>
+/* RESIZE */
+window.addEventListener("resize",()=>{
+  resizeNeural();
+});
+</script>
 
 </body>
 </html>
