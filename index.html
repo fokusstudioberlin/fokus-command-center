@@ -3,36 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FOKUS // COMMAND CENTER</title>
+<title>FOKUS // INTELLIGENCE SYSTEM</title>
 
 <style>
 :root{
-  --bg:#050706;
-  --panel:#090c0b;
-  --panel2:#0d100f;
-  --line:#252b28;
-  --line2:#171b19;
-  --orange:#ff8a00;
-  --orange2:#ffad33;
-  --orangeDim:rgba(255,138,0,.16);
-  --text:#e6e7e3;
-  --muted:#68706b;
-  --green:#74ff9d;
+  --bg:#030504;
+  --bg2:#070907;
+  --orange:#ff9200;
+  --orange2:#ffb13b;
+  --orange3:#ffd08a;
+  --glow:rgba(255,146,0,.38);
+  --dim:rgba(255,146,0,.10);
+  --line:rgba(255,174,63,.18);
+  --line2:rgba(255,255,255,.07);
+  --text:#e9e6df;
+  --muted:#69706b;
+  --green:#7dff9b;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
 
+html{background:var(--bg)}
+
 body{
   min-height:100vh;
   background:
-    radial-gradient(circle at 75% -10%,rgba(255,138,0,.09),transparent 28%),
-    linear-gradient(180deg,#070908,#030504);
+    radial-gradient(circle at 50% 42%,rgba(255,132,0,.09),transparent 27%),
+    radial-gradient(circle at 50% 50%,#080a08 0,#030504 65%);
   color:var(--text);
   font-family:"Courier New",monospace;
   overflow-x:hidden;
 }
 
-/* SCREEN TEXTURE */
+/* SCANLINES */
 body:after{
   content:"";
   position:fixed;
@@ -42,73 +45,106 @@ body:after{
   background:
     repeating-linear-gradient(
       0deg,
-      rgba(255,255,255,.013) 0,
-      rgba(255,255,255,.013) 1px,
+      rgba(255,255,255,.012) 0,
+      rgba(255,255,255,.012) 1px,
       transparent 1px,
-      transparent 3px
+      transparent 4px
     );
-  opacity:.55;
+  mix-blend-mode:screen;
 }
 
-.app{
-  width:min(1800px,97%);
+/* GLOBAL BACKGROUND CANVAS */
+#space{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+
+.shell{
+  width:min(1800px,96%);
   margin:auto;
-  padding:18px 0 35px;
+  position:relative;
+  z-index:2;
+  padding:16px 0 30px;
 }
 
 /* HEADER */
 header{
-  height:56px;
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
+  height:58px;
   display:flex;
   align-items:center;
   justify-content:space-between;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  position:relative;
 }
 
-.logo{
-  letter-spacing:4px;
-  font-weight:bold;
-  font-size:17px;
-}
-
-.logo b{color:var(--orange)}
-
-.header-right{
-  display:flex;
-  align-items:center;
-  gap:24px;
-  color:var(--muted);
-  font-size:9px;
-  letter-spacing:2px;
-}
-
-.online{color:var(--green)}
-
-.online:before{
+header:before,
+header:after{
   content:"";
-  width:6px;height:6px;
+  position:absolute;
+  bottom:-1px;
+  width:80px;
+  height:1px;
+  background:var(--orange);
+  box-shadow:0 0 12px var(--orange);
+}
+
+header:before{left:0}
+header:after{right:0}
+
+.brand{
+  letter-spacing:4px;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.brand span{
+  color:var(--orange);
+  text-shadow:0 0 12px var(--glow);
+}
+
+.system-meta{
+  display:flex;
+  gap:25px;
+  align-items:center;
+  font-size:8px;
+  letter-spacing:2px;
+  color:var(--muted);
+}
+
+.secure{color:var(--green)}
+
+.secure:before{
+  content:"";
+  width:6px;
+  height:6px;
   display:inline-block;
-  border-radius:50%;
   background:var(--green);
-  box-shadow:0 0 12px var(--green);
+  border-radius:50%;
   margin-right:7px;
+  box-shadow:0 0 12px var(--green);
   animation:pulse 1.6s infinite;
 }
 
-@keyframes pulse{50%{opacity:.25}}
+@keyframes pulse{
+  50%{opacity:.25}
+}
 
-/* DATA TICKER */
+/* TICKER */
 .ticker{
-  border-bottom:1px solid var(--line);
-  height:31px;
+  height:29px;
   overflow:hidden;
   white-space:nowrap;
-  font-size:9px;
-  letter-spacing:2px;
-  color:#5d635f;
   display:flex;
   align-items:center;
+  border-bottom:1px solid var(--line2);
+  color:#4d544f;
+  font-size:8px;
+  letter-spacing:2px;
 }
 
 .ticker-track{
@@ -128,1072 +164,1561 @@ header{
 
 /* INTRO */
 .intro{
-  padding:31px 2px 24px;
+  height:105px;
   display:flex;
+  align-items:center;
   justify-content:space-between;
-  align-items:end;
 }
 
-.overline{
+.eyebrow{
+  font-size:8px;
   color:var(--orange);
   letter-spacing:4px;
-  font-size:9px;
   margin-bottom:8px;
 }
 
 h1{
+  font-size:clamp(25px,3vw,43px);
   font-weight:400;
-  font-size:clamp(27px,3vw,45px);
   letter-spacing:-2px;
 }
 
-.intro p{
-  margin-top:8px;
-  color:var(--muted);
-  font-size:9px;
+.intro-sub{
+  margin-top:7px;
+  color:#505752;
+  font-size:8px;
   letter-spacing:2px;
 }
 
-.classified{
+.security{
   text-align:right;
-  color:#464c48;
-  font-size:8px;
-  letter-spacing:2px;
-  line-height:1.8;
-}
-
-.classified b{color:var(--orange)}
-
-/* GRIDS */
-.grid3{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-bottom:8px;
-}
-
-.main-grid{
-  display:grid;
-  grid-template-columns:1.15fr .85fr;
-  gap:8px;
-  margin-bottom:8px;
-}
-
-.lower-grid{
-  display:grid;
-  grid-template-columns:1.3fr .7fr;
-  gap:8px;
-}
-
-/* PANEL */
-.panel{
-  background:
-    linear-gradient(135deg,rgba(255,255,255,.018),transparent 40%),
-    var(--panel);
-  border:1px solid var(--line);
-  position:relative;
-  overflow:hidden;
-  padding:17px;
-}
-
-.panel:before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0;
-  width:30px;
-  height:2px;
-  background:var(--orange);
-  box-shadow:0 0 12px var(--orange);
-}
-
-.panel:hover{
-  border-color:rgba(255,138,0,.45);
-  box-shadow:0 0 30px rgba(255,138,0,.035);
-}
-
-.panel-head{
-  display:flex;
-  justify-content:space-between;
-  font-size:8px;
-  letter-spacing:2.5px;
-  color:#8b918d;
-  margin-bottom:17px;
-}
-
-.code{color:#444a46}
-
-.value{
-  font-size:31px;
-  letter-spacing:-2px;
-}
-
-.label{
-  color:var(--muted);
-  font-size:8px;
-  letter-spacing:2px;
-  margin-left:5px;
-}
-
-.positive{
-  margin-top:5px;
-  color:var(--green);
-  font-size:8px;
-  letter-spacing:1px;
-}
-
-/* SERVICE CARDS */
-.service{
-  min-height:205px;
-}
-
-.service-bottom{
-  position:absolute;
-  left:17px;
-  right:17px;
-  bottom:15px;
-  border-top:1px solid var(--line2);
-  padding-top:11px;
-  display:flex;
-  gap:25px;
-}
-
-.micro-number{font-size:12px}
-
-.micro-label{
-  color:#4d544f;
+  color:#454b47;
   font-size:7px;
-  letter-spacing:1.5px;
-  margin-top:3px;
+  letter-spacing:2px;
+  line-height:1.9;
 }
 
-/* MINI CHART */
-.spark{
-  width:100%;
-  height:43px;
-  margin-top:13px;
-}
-
-.spark polyline{
-  fill:none;
-  stroke:var(--orange);
-  stroke-width:1.4;
-  filter:drop-shadow(0 0 4px rgba(255,138,0,.45));
-}
-
-.spark .gridline{
-  stroke:#202522;
-  stroke-width:.6;
-}
-
-/* MAIL */
-.mail{
-  min-height:122px;
-}
-
-.mail-main{
-  display:flex;
-  align-items:end;
-  justify-content:space-between;
-}
-
-.mail-count{
-  font-size:27px;
-}
-
-.mail-info{
-  color:#59605c;
-  font-size:7px;
-  letter-spacing:1.5px;
-  line-height:1.8;
-  text-align:right;
-}
-
-.mail-info b{
-  color:var(--orange2);
+.security strong{
+  color:var(--orange);
   font-weight:normal;
 }
 
-/* AI CORE */
-.ai-core{
-  min-height:455px;
-  padding:0;
-}
-
-.ai-core .panel-head{
-  padding:17px 17px 0;
+/* MAIN HUD */
+.hud{
   position:relative;
-  z-index:4;
+  min-height:690px;
+  border-top:1px solid var(--line2);
+  border-bottom:1px solid var(--line2);
+  overflow:hidden;
 }
 
-#neuralCanvas{
+/* DECORATIVE GRID */
+.hud:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:65px 65px;
+  mask-image:radial-gradient(circle at center,black,transparent 78%);
+  pointer-events:none;
+}
+
+/* CENTRAL CORE */
+.core-zone{
+  position:absolute;
+  width:610px;
+  height:610px;
+  left:50%;
+  top:49%;
+  transform:translate(-50%,-50%);
+}
+
+#neural{
   position:absolute;
   inset:0;
   width:100%;
   height:100%;
 }
 
-.core-overlay{
+/* ROTATING HUD RINGS */
+.ring{
   position:absolute;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  border-radius:50%;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
   pointer-events:none;
 }
 
-.core-center{
-  width:128px;
-  height:128px;
-  border-radius:50%;
-  border:1px solid rgba(255,138,0,.28);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  background:
-    radial-gradient(circle,rgba(255,138,0,.15),rgba(5,7,6,.8) 63%);
-  box-shadow:
-    0 0 40px rgba(255,138,0,.12),
-    inset 0 0 25px rgba(255,138,0,.1);
+.ring1{
+  width:420px;
+  height:420px;
+  border:1px solid rgba(255,146,0,.16);
+  border-top-color:rgba(255,146,0,.8);
+  border-bottom-color:rgba(255,146,0,.35);
+  box-shadow:0 0 35px rgba(255,146,0,.04);
+  animation:spin 26s linear infinite;
 }
 
-.core-center:before{
-  content:"";
+.ring2{
+  width:350px;
+  height:350px;
+  border:1px dashed rgba(255,177,59,.23);
+  animation:spinBack 34s linear infinite;
+}
+
+.ring3{
+  width:275px;
+  height:275px;
+  border:1px solid rgba(255,146,0,.15);
+  border-left:2px solid var(--orange);
+  border-right:2px solid var(--orange);
+  animation:spin 13s linear infinite;
+}
+
+.ring4{
+  width:205px;
+  height:205px;
+  border:1px dashed rgba(255,208,138,.3);
+  animation:spinBack 9s linear infinite;
+}
+
+.ring5{
+  width:490px;
+  height:490px;
+  border:1px dotted rgba(255,146,0,.12);
+  animation:spin 60s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:translate(-50%,-50%) rotate(360deg)}
+}
+
+@keyframes spinBack{
+  to{transform:translate(-50%,-50%) rotate(-360deg)}
+}
+
+/* CORE CENTER */
+.core-center{
   position:absolute;
-  width:157px;
-  height:157px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:145px;
+  height:145px;
   border-radius:50%;
-  border:1px dashed rgba(255,138,0,.22);
-  animation:rotate 18s linear infinite;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  background:
+    radial-gradient(circle,rgba(255,160,0,.24),rgba(20,12,2,.75) 43%,rgba(3,5,4,.92) 70%);
+  border:1px solid rgba(255,174,63,.5);
+  box-shadow:
+    0 0 22px rgba(255,146,0,.25),
+    0 0 70px rgba(255,146,0,.12),
+    inset 0 0 35px rgba(255,146,0,.17);
+  z-index:5;
 }
 
 .core-center:after{
   content:"";
   position:absolute;
-  width:181px;
-  height:181px;
+  width:105%;
+  height:105%;
   border-radius:50%;
-  border-top:1px solid var(--orange);
-  border-left:1px solid transparent;
-  animation:rotateReverse 9s linear infinite;
+  border-top:2px solid var(--orange);
+  border-right:1px solid transparent;
+  filter:drop-shadow(0 0 7px var(--orange));
+  animation:spinSimple 4s linear infinite;
 }
 
-@keyframes rotate{to{transform:rotate(360deg)}}
-@keyframes rotateReverse{to{transform:rotate(-360deg)}}
+@keyframes spinSimple{
+  to{transform:rotate(360deg)}
+}
 
-.ai-name{
+.ai-title{
+  font-size:19px;
+  letter-spacing:4px;
   color:var(--orange2);
-  font-size:18px;
-  letter-spacing:3px;
-  text-shadow:0 0 14px rgba(255,138,0,.8);
+  text-shadow:
+    0 0 8px rgba(255,146,0,.8),
+    0 0 22px rgba(255,146,0,.35);
 }
 
-.ai-state{
-  margin-top:7px;
+.ai-status{
   font-size:7px;
   letter-spacing:2px;
   color:var(--green);
+  margin-top:8px;
 }
 
-.core-data{
+/* CORE LABELS */
+.core-label{
   position:absolute;
-  bottom:15px;
-  left:17px;
-  right:17px;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  border-top:1px solid var(--line);
-  padding-top:11px;
-  z-index:3;
+  font-size:7px;
+  letter-spacing:2px;
+  color:#575e59;
 }
 
-.core-data div{
+.cl1{top:56px;left:260px}
+.cl2{bottom:55px;left:250px}
+.cl3{top:280px;left:18px}
+.cl4{top:280px;right:18px}
+
+/* SIDE NODE AREAS */
+.side{
+  position:absolute;
+  width:29%;
+  top:45px;
+  bottom:45px;
+  z-index:5;
+}
+
+.left{left:0}
+.right{right:0}
+
+/* DATA NODE */
+.node{
+  position:absolute;
+  width:90%;
+  max-width:390px;
+  padding:14px 16px 13px;
+  border-left:1px solid rgba(255,146,0,.32);
+  background:
+    linear-gradient(90deg,rgba(255,146,0,.045),rgba(4,6,5,.20) 60%,transparent);
+  transition:.25s ease;
+}
+
+.right .node{
+  right:0;
+  border-left:0;
+  border-right:1px solid rgba(255,146,0,.32);
+  background:
+    linear-gradient(-90deg,rgba(255,146,0,.045),rgba(4,6,5,.20) 60%,transparent);
+}
+
+.node:hover{
+  background:rgba(255,146,0,.07);
+  box-shadow:0 0 30px rgba(255,146,0,.05);
+}
+
+.node:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:70%;
+  height:1px;
+  background:linear-gradient(90deg,var(--orange),transparent);
+  opacity:.45;
+}
+
+.right .node:before{
+  left:auto;
+  right:0;
+  background:linear-gradient(-90deg,var(--orange),transparent);
+}
+
+.n1{top:35px}
+.n2{top:225px}
+.n3{top:415px}
+
+.node-head{
+  display:flex;
+  justify-content:space-between;
+  color:#8a918c;
+  font-size:8px;
+  letter-spacing:2px;
+  margin-bottom:10px;
+}
+
+.node-code{color:#454b47}
+
+.node-value{
+  font-size:28px;
+  letter-spacing:-2px;
+}
+
+.node-unit{
+  color:#5c635e;
   font-size:7px;
-  color:#505752;
+  letter-spacing:1.5px;
+  margin-left:5px;
+}
+
+.growth{
+  color:var(--green);
+  font-size:7px;
+  margin-top:4px;
   letter-spacing:1px;
 }
 
-.core-data b{
-  display:block;
-  color:#9da19e;
-  font-size:10px;
-  margin-top:4px;
-  font-weight:normal;
-}
-
-/* ANALYTICS */
-.analytics{
-  min-height:455px;
-}
-
-.chart-wrap{
-  height:210px;
+/* MINI GRAPH */
+.mini-chart{
+  height:45px;
   margin-top:10px;
-  position:relative;
-  border-left:1px solid #222724;
-  border-bottom:1px solid #222724;
 }
 
-#analyticsChart{
+.mini-chart canvas{
   width:100%;
   height:100%;
 }
 
-.chart-legend{
+/* EMAIL */
+.mail-row{
   display:flex;
-  gap:22px;
-  margin-top:13px;
-  font-size:7px;
-  letter-spacing:1.5px;
-  color:#5c625e;
+  justify-content:space-between;
+  align-items:end;
+  margin-top:4px;
 }
 
-.dot{
-  width:5px;height:5px;
-  display:inline-block;
+.mail-num{
+  font-size:28px;
+}
+
+.mail-meta{
+  text-align:right;
+  color:#515853;
+  font-size:7px;
+  line-height:1.8;
+  letter-spacing:1px;
+}
+
+.priority{color:var(--orange2)}
+
+/* CONNECTOR LINES */
+.connector{
+  position:absolute;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--orange),transparent);
+  opacity:.28;
+  z-index:1;
+  transform-origin:center;
+}
+
+.con-l1{
+  width:235px;
+  left:26%;
+  top:155px;
+  transform:rotate(18deg);
+}
+
+.con-l2{
+  width:220px;
+  left:27%;
+  top:345px;
+}
+
+.con-l3{
+  width:235px;
+  left:26%;
+  top:535px;
+  transform:rotate(-18deg);
+}
+
+.con-r1{
+  width:235px;
+  right:26%;
+  top:155px;
+  transform:rotate(-18deg);
+}
+
+.con-r2{
+  width:220px;
+  right:27%;
+  top:345px;
+}
+
+.con-r3{
+  width:235px;
+  right:26%;
+  top:535px;
+  transform:rotate(18deg);
+}
+
+/* SIGNAL TRAVELER */
+.connector:after{
+  content:"";
+  position:absolute;
+  width:5px;
+  height:5px;
   border-radius:50%;
-  margin-right:5px;
+  top:-2px;
+  left:0;
+  background:var(--orange2);
+  box-shadow:0 0 10px var(--orange);
+  animation:travel 3s linear infinite;
 }
 
-.dot.orange{background:var(--orange)}
-.dot.gray{background:#737975}
-.dot.green{background:var(--green)}
-
-.analytics-numbers{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  margin-top:24px;
-  border-top:1px solid var(--line2);
+@keyframes travel{
+  from{left:0;opacity:0}
+  15%{opacity:1}
+  85%{opacity:1}
+  to{left:100%;opacity:0}
 }
 
-.metric{
-  padding:14px 8px 0 0;
-}
-
-.metric-value{
-  font-size:17px;
-}
-
-.metric-label{
-  font-size:7px;
-  color:#505652;
+/* CORE READOUT */
+.readout{
+  position:absolute;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:30px;
+  z-index:6;
+  font-size:6px;
+  color:#555c57;
   letter-spacing:1.5px;
-  margin-top:5px;
+  white-space:nowrap;
 }
 
-/* ACTIVITY */
-.activity{
-  min-height:265px;
-}
-
-.activity-row{
-  display:grid;
-  grid-template-columns:55px 100px 1fr 55px;
-  padding:10px 0;
-  border-bottom:1px solid var(--line2);
-  font-size:8px;
-  letter-spacing:.5px;
-}
-
-.time{color:#444a46}
-.source{color:var(--orange)}
-.event{color:#9a9f9b}
-.tag{text-align:right;color:#59605b}
-
-/* JARVIS BRIEFING */
-.brief{
-  min-height:265px;
-}
-
-.brief-text{
-  color:#969c98;
-  font-size:10px;
-  line-height:1.9;
-}
-
-.brief-text b{
-  color:var(--orange2);
+.readout b{
+  color:#a6aaa7;
   font-weight:normal;
 }
 
-.cursor{
-  display:inline-block;
-  width:6px;
-  height:11px;
-  background:var(--orange);
-  margin-left:4px;
-  vertical-align:middle;
-  animation:blink 1s infinite;
+/* LOWER ANALYTICS */
+.analytics-zone{
+  display:grid;
+  grid-template-columns:1.35fr .65fr;
+  gap:9px;
+  margin-top:10px;
 }
 
-@keyframes blink{50%{opacity:0}}
+.signal-panel,
+.activity-panel{
+  border:1px solid var(--line2);
+  background:rgba(6,8,7,.68);
+  position:relative;
+  padding:16px;
+  min-height:255px;
+}
+
+.signal-panel:before,
+.activity-panel:before{
+  content:"";
+  position:absolute;
+  top:-1px;
+  left:0;
+  width:55px;
+  height:1px;
+  background:var(--orange);
+  box-shadow:0 0 8px var(--orange);
+}
+
+.panel-title{
+  display:flex;
+  justify-content:space-between;
+  color:#7d847f;
+  font-size:8px;
+  letter-spacing:2px;
+  margin-bottom:14px;
+}
+
+.panel-title span:last-child{
+  color:#454b47;
+}
+
+#mainChart{
+  width:100%;
+  height:170px;
+}
+
+.legend{
+  display:flex;
+  gap:25px;
+  margin-top:8px;
+  color:#505752;
+  font-size:7px;
+  letter-spacing:1.5px;
+}
+
+.legend i{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  display:inline-block;
+  margin-right:6px;
+}
+
+.l1{background:var(--orange)}
+.l2{background:#8c918e}
+.l3{background:var(--green)}
+
+/* ACTIVITY */
+.event{
+  display:grid;
+  grid-template-columns:48px 70px 1fr;
+  padding:9px 0;
+  border-bottom:1px solid var(--line2);
+  font-size:7px;
+  line-height:1.5;
+}
+
+.event-time{color:#444a46}
+.event-source{color:var(--orange)}
+.event-text{color:#8a908c}
 
 /* COMMAND */
 .command{
-  margin-top:8px;
-  min-height:57px;
+  margin-top:10px;
+  height:60px;
+  border:1px solid rgba(255,174,63,.18);
   display:flex;
   align-items:center;
-  border:1px solid #303632;
-  background:#070908;
+  background:rgba(4,6,5,.92);
+  box-shadow:0 0 35px rgba(255,146,0,.025);
   position:relative;
 }
 
 .command:before{
-  content:"COMMAND INPUT";
+  content:"NEURAL COMMAND INTERFACE";
   position:absolute;
   top:-5px;
-  left:14px;
+  left:18px;
   padding:0 7px;
-  background:var(--bg);
-  color:#464c48;
-  font-size:7px;
+  background:#030504;
+  color:#4b524d;
+  font-size:6px;
   letter-spacing:2px;
 }
 
 .prompt{
   color:var(--orange);
-  padding:0 14px;
+  font-size:16px;
+  padding:0 15px;
   text-shadow:0 0 10px var(--orange);
 }
 
 .command input{
   flex:1;
-  background:none;
   border:0;
   outline:0;
+  background:none;
   color:white;
   font-family:inherit;
+  font-size:9px;
   letter-spacing:1.5px;
-  font-size:10px;
   padding:18px 0;
 }
 
-.command input::placeholder{color:#3d433f}
-
-.mic{
-  border:0;
-  border-left:1px solid var(--line);
-  background:transparent;
-  color:var(--orange);
-  height:35px;
-  padding:0 18px;
-  cursor:pointer;
-  font-family:inherit;
-  font-size:9px;
-  letter-spacing:1px;
+.command input::placeholder{
+  color:#3d433f;
 }
 
-.execute{
+.cmd-button{
   height:35px;
-  margin-right:9px;
-  border:1px solid rgba(255,138,0,.35);
-  background:rgba(255,138,0,.05);
+  border:1px solid rgba(255,146,0,.24);
+  background:rgba(255,146,0,.035);
   color:var(--orange);
-  padding:0 18px;
   font-family:inherit;
-  font-size:8px;
+  font-size:7px;
   letter-spacing:1.5px;
+  padding:0 17px;
+  margin-right:8px;
   cursor:pointer;
+  transition:.2s;
 }
 
-.execute:hover{
-  background:rgba(255,138,0,.13);
-  box-shadow:0 0 15px rgba(255,138,0,.08);
+.cmd-button:hover{
+  background:rgba(255,146,0,.11);
+  box-shadow:0 0 15px rgba(255,146,0,.08);
 }
 
-/* BOOT */
+/* BOOT SCREEN */
 .boot{
   position:fixed;
   inset:0;
-  z-index:99999;
-  background:#030504;
+  background:#020302;
+  z-index:100000;
   display:flex;
   justify-content:center;
   align-items:center;
   transition:opacity .8s,visibility .8s;
 }
 
-.boot.hidden{
+.boot.off{
   opacity:0;
   visibility:hidden;
 }
 
-.bootbox{
-  width:min(520px,80%);
+.boot-inner{
+  width:min(570px,82%);
 }
 
-.boot-title{
-  font-size:12px;
+.boot-logo{
+  font-size:13px;
   letter-spacing:5px;
 }
 
-.boot-title b{color:var(--orange)}
+.boot-logo b{color:var(--orange)}
 
-.boot-status{
-  margin-top:13px;
-  color:#4f5551;
-  font-size:8px;
+.boot-text{
+  color:#4d544f;
+  font-size:7px;
   letter-spacing:2px;
+  margin-top:13px;
 }
 
-.boot-line{
+.boot-track{
   height:2px;
-  background:#181b19;
+  background:#161916;
   margin-top:18px;
   overflow:hidden;
 }
 
-.boot-progress{
+.boot-bar{
   height:100%;
   width:0;
   background:var(--orange);
-  box-shadow:0 0 15px var(--orange);
-  animation:load 2.2s forwards;
+  box-shadow:0 0 14px var(--orange);
+  animation:bootLoad 2.7s forwards;
 }
 
-@keyframes load{to{width:100%}}
+@keyframes bootLoad{
+  to{width:100%}
+}
 
 /* RESPONSIVE */
-@media(max-width:950px){
-  .grid3,.main-grid,.lower-grid{
+@media(max-width:1000px){
+  .hud{
+    min-height:auto;
+    display:flex;
+    flex-direction:column;
+    padding:20px 0;
+  }
+
+  .core-zone{
+    position:relative;
+    left:auto;
+    top:auto;
+    transform:none;
+    width:100%;
+    height:520px;
+    order:1;
+  }
+
+  .side{
+    position:relative;
+    width:100%;
+    top:auto;
+    bottom:auto;
+    display:grid;
     grid-template-columns:1fr;
   }
-  .header-right{display:none}
-  .classified{display:none}
-  .ai-core,.analytics{min-height:400px}
+
+  .left{order:2}
+  .right{order:3}
+
+  .node,
+  .right .node{
+    position:relative;
+    top:auto;
+    width:100%;
+    max-width:none;
+    margin:5px 0;
+  }
+
+  .connector{display:none}
+
+  .analytics-zone{
+    grid-template-columns:1fr;
+  }
+
+  .system-meta{display:none}
+  .security{display:none}
 }
+
 </style>
 </head>
 
 <body>
 
+<canvas id="space"></canvas>
+
+<!-- BOOT -->
 <div class="boot" id="boot">
-  <div class="bootbox">
-    <div class="boot-title">FOKUS <b>//</b> INTELLIGENCE SYSTEM</div>
-    <div class="boot-status" id="bootStatus">INITIALIZING SECURE ENVIRONMENT...</div>
-    <div class="boot-line"><div class="boot-progress"></div></div>
+  <div class="boot-inner">
+    <div class="boot-logo">FOKUS <b>//</b> INTELLIGENCE SYSTEM</div>
+    <div class="boot-text" id="bootText">INITIALIZING SECURE ENVIRONMENT...</div>
+    <div class="boot-track"><div class="boot-bar"></div></div>
   </div>
 </div>
 
-<div class="app">
+
+<div class="shell" id="shell">
 
 <header>
-  <div class="logo">FOKUS <b>//</b> COMMAND CENTER</div>
+  <div class="brand">
+    FOKUS <span>//</span> COMMAND CENTER
+  </div>
 
-  <div class="header-right">
-    <span>NODE: BERLIN-01</span>
+  <div class="system-meta">
+    <span>NODE // BERLIN</span>
     <span id="clock">00:00:00</span>
-    <span class="online">SECURE CONNECTION</span>
+    <span>ENCRYPTION // AES</span>
+    <span class="secure">SYSTEM ONLINE</span>
   </div>
 </header>
 
+
 <div class="ticker">
   <div class="ticker-track">
-    NETWORK <b>SECURE</b> &nbsp;//&nbsp;
-    YT-01 <b>+12</b> &nbsp;//&nbsp;
-    YT-02 <b>+04</b> &nbsp;//&nbsp;
-    BEATSTARS <b>+184 PLAYS</b> &nbsp;//&nbsp;
-    MAIL NODES <b>03 ACTIVE</b> &nbsp;//&nbsp;
-    AI CORE <b>ONLINE</b> &nbsp;//&nbsp;
-    THREAT LEVEL <b>ZERO</b>
+    YT-NODE-01 <b>ACTIVE</b>
+    &nbsp;&nbsp;//&nbsp;&nbsp;
+    YT-NODE-02 <b>ACTIVE</b>
+    &nbsp;&nbsp;//&nbsp;&nbsp;
+    BEATSTARS <b>+184 SIGNAL</b>
+    &nbsp;&nbsp;//&nbsp;&nbsp;
+    MAIL-NETWORK <b>03 NODES</b>
+    &nbsp;&nbsp;//&nbsp;&nbsp;
+    NEURAL CORE <b>ONLINE</b>
+    &nbsp;&nbsp;//&nbsp;&nbsp;
+    VOICE ENGINE <b>STANDBY</b>
+    &nbsp;&nbsp;//&nbsp;&nbsp;
+    SECURITY <b>NOMINAL</b>
   </div>
 </div>
+
 
 <section class="intro">
+
   <div>
-    <div class="overline">// INTELLIGENCE OVERVIEW</div>
+    <div class="eyebrow">// INTELLIGENCE OVERVIEW</div>
     <h1 id="greeting">GOOD EVENING.</h1>
-    <p>ALL SYSTEMS OPERATIONAL // LIVE DATA ENVIRONMENT</p>
-  </div>
-
-  <div class="classified">
-    ACCESS LEVEL <b>ALPHA</b><br>
-    SESSION ENCRYPTED<br>
-    FOKUS INTELLIGENCE NETWORK
-  </div>
-</section>
-
-
-<!-- SERVICES -->
-<div class="grid3">
-
-<section class="panel service">
-  <div class="panel-head">
-    <span>YOUTUBE // CHANNEL 01</span>
-    <span class="code">YT-A01</span>
-  </div>
-
-  <span class="value">327</span>
-  <span class="label">SUBSCRIBERS</span>
-  <div class="positive">▲ +12 // 24H</div>
-
-  <svg class="spark" viewBox="0 0 300 43" preserveAspectRatio="none">
-    <line class="gridline" x1="0" y1="21" x2="300" y2="21"/>
-    <polyline points="0,34 22,31 42,32 65,25 88,28 110,18 132,21 155,14 178,19 200,10 222,13 244,7 270,11 300,4"/>
-  </svg>
-
-  <div class="service-bottom">
-    <div><div class="micro-number">1,842</div><div class="micro-label">VIEWS // 24H</div></div>
-    <div><div class="micro-number">51%</div><div class="micro-label">RETENTION</div></div>
-    <div><div class="micro-number">+8.2%</div><div class="micro-label">GROWTH</div></div>
-  </div>
-</section>
-
-
-<section class="panel service">
-  <div class="panel-head">
-    <span>YOUTUBE // CHANNEL 02</span>
-    <span class="code">YT-A02</span>
-  </div>
-
-  <span class="value">1.08K</span>
-  <span class="label">SUBSCRIBERS</span>
-  <div class="positive">▲ +04 // 24H</div>
-
-  <svg class="spark" viewBox="0 0 300 43" preserveAspectRatio="none">
-    <line class="gridline" x1="0" y1="21" x2="300" y2="21"/>
-    <polyline points="0,30 25,29 50,25 72,27 96,21 120,23 145,17 170,19 194,15 220,16 244,10 270,12 300,8"/>
-  </svg>
-
-  <div class="service-bottom">
-    <div><div class="micro-number">3,201</div><div class="micro-label">VIEWS // 24H</div></div>
-    <div><div class="micro-number">44%</div><div class="micro-label">RETENTION</div></div>
-    <div><div class="micro-number">+3.1%</div><div class="micro-label">GROWTH</div></div>
-  </div>
-</section>
-
-
-<section class="panel service">
-  <div class="panel-head">
-    <span>BEATSTARS // MARKET NODE</span>
-    <span class="code">BS-M01</span>
-  </div>
-
-  <span class="value">12.4K</span>
-  <span class="label">PLAYS</span>
-  <div class="positive">▲ +184 // 24H</div>
-
-  <svg class="spark" viewBox="0 0 300 43" preserveAspectRatio="none">
-    <line class="gridline" x1="0" y1="21" x2="300" y2="21"/>
-    <polyline points="0,36 20,29 40,33 62,18 82,25 102,11 124,20 145,9 166,16 188,6 210,14 233,8 255,12 280,5 300,7"/>
-  </svg>
-
-  <div class="service-bottom">
-    <div><div class="micro-number">€84</div><div class="micro-label">REVENUE</div></div>
-    <div><div class="micro-number">02</div><div class="micro-label">SALES</div></div>
-    <div><div class="micro-number">+11%</div><div class="micro-label">PLAYS</div></div>
-  </div>
-</section>
-
-</div>
-
-
-<!-- MAIL -->
-<div class="grid3">
-
-<section class="panel mail">
-  <div class="panel-head">
-    <span>MAIL // STUDIO</span>
-    <span class="code">MX-01</span>
-  </div>
-  <div class="mail-main">
-    <div><span class="mail-count">03</span><span class="label">NEW</span></div>
-    <div class="mail-info"><b>01 IMPORTANT</b><br>LAST SYNC 20:51</div>
-  </div>
-</section>
-
-<section class="panel mail">
-  <div class="panel-head">
-    <span>MAIL // BUSINESS</span>
-    <span class="code">MX-02</span>
-  </div>
-  <div class="mail-main">
-    <div><span class="mail-count">02</span><span class="label">NEW</span></div>
-    <div class="mail-info"><b>01 IMPORTANT</b><br>LAST SYNC 20:51</div>
-  </div>
-</section>
-
-<section class="panel mail">
-  <div class="panel-head">
-    <span>MAIL // PRIMARY</span>
-    <span class="code">MX-03</span>
-  </div>
-  <div class="mail-main">
-    <div><span class="mail-count">02</span><span class="label">NEW</span></div>
-    <div class="mail-info">00 IMPORTANT<br>LAST SYNC 20:51</div>
-  </div>
-</section>
-
-</div>
-
-
-<!-- AI + ANALYTICS -->
-<div class="main-grid">
-
-<section class="panel ai-core">
-
-  <div class="panel-head">
-    <span>NEURAL INTELLIGENCE CORE // JARVIS</span>
-    <span class="code">AI-NX01</span>
-  </div>
-
-  <canvas id="neuralCanvas"></canvas>
-
-  <div class="core-overlay">
-    <div class="core-center">
-      <div class="ai-name">JARVIS</div>
-      <div class="ai-state">● LISTENING</div>
+    <div class="intro-sub">
+      FOKUS NETWORK ACTIVE // AWAITING OPERATOR COMMAND
     </div>
   </div>
 
-  <div class="core-data">
-    <div>NEURAL NODES<b id="nodeCount">42</b></div>
-    <div>RESPONSE<b>14 MS</b></div>
-    <div>VOICE ENGINE<b>READY</b></div>
-    <div>AI STATUS<b>ONLINE</b></div>
+  <div class="security">
+    ACCESS LEVEL <strong>ALPHA</strong><br>
+    SECURE SESSION ESTABLISHED<br>
+    INTELLIGENCE NODE // 01
   </div>
 
 </section>
 
 
-<section class="panel analytics">
+<!-- MAIN HUD -->
+<section class="hud" id="hud">
 
-  <div class="panel-head">
-    <span>LIVE ANALYTICS // 7 DAY SIGNAL</span>
-    <span class="code">DATA-X7</span>
+  <!-- CONNECTORS -->
+  <div class="connector con-l1"></div>
+  <div class="connector con-l2"></div>
+  <div class="connector con-l3"></div>
+
+  <div class="connector con-r1"></div>
+  <div class="connector con-r2"></div>
+  <div class="connector con-r3"></div>
+
+
+  <!-- LEFT DATA -->
+  <div class="side left">
+
+    <div class="node n1">
+      <div class="node-head">
+        <span>YOUTUBE // CHANNEL 01</span>
+        <span class="node-code">YT-01</span>
+      </div>
+
+      <span class="node-value">327</span>
+      <span class="node-unit">SUBSCRIBERS</span>
+
+      <div class="growth">▲ +12 // 24 HOURS</div>
+
+      <div class="mini-chart">
+        <canvas class="spark" data-set="0"></canvas>
+      </div>
+    </div>
+
+
+    <div class="node n2">
+      <div class="node-head">
+        <span>YOUTUBE // CHANNEL 02</span>
+        <span class="node-code">YT-02</span>
+      </div>
+
+      <span class="node-value">1.08K</span>
+      <span class="node-unit">SUBSCRIBERS</span>
+
+      <div class="growth">▲ +04 // 24 HOURS</div>
+
+      <div class="mini-chart">
+        <canvas class="spark" data-set="1"></canvas>
+      </div>
+    </div>
+
+
+    <div class="node n3">
+      <div class="node-head">
+        <span>BEATSTARS // MARKET</span>
+        <span class="node-code">BS-01</span>
+      </div>
+
+      <span class="node-value">12.4K</span>
+      <span class="node-unit">PLAYS</span>
+
+      <div class="growth">▲ +184 // 24 HOURS</div>
+
+      <div class="mini-chart">
+        <canvas class="spark" data-set="2"></canvas>
+      </div>
+    </div>
+
   </div>
 
-  <div class="chart-wrap">
-    <canvas id="analyticsChart"></canvas>
+
+  <!-- CENTRAL AI -->
+  <div class="core-zone" id="coreZone">
+
+    <canvas id="neural"></canvas>
+
+    <div class="ring ring5"></div>
+    <div class="ring ring1"></div>
+    <div class="ring ring2"></div>
+    <div class="ring ring3"></div>
+    <div class="ring ring4"></div>
+
+    <div class="core-label cl1">NEURAL MATRIX // ACTIVE</div>
+    <div class="core-label cl2">VOICE ENGINE // STANDBY</div>
+    <div class="core-label cl3">DATA LINK // 01</div>
+    <div class="core-label cl4">DATA LINK // 02</div>
+
+    <div class="core-center">
+      <div class="ai-title">JARVIS</div>
+      <div class="ai-status">● ONLINE</div>
+    </div>
+
   </div>
 
-  <div class="chart-legend">
-    <span><i class="dot orange"></i>YOUTUBE 01</span>
-    <span><i class="dot gray"></i>YOUTUBE 02</span>
-    <span><i class="dot green"></i>BEATSTARS</span>
+
+  <!-- RIGHT MAIL -->
+  <div class="side right">
+
+    <div class="node n1">
+      <div class="node-head">
+        <span>COMMUNICATION // MAIL 01</span>
+        <span class="node-code">MX-01</span>
+      </div>
+
+      <div class="mail-row">
+        <div>
+          <span class="mail-num">03</span>
+          <span class="node-unit">NEW</span>
+        </div>
+
+        <div class="mail-meta">
+          <span class="priority">01 PRIORITY</span><br>
+          SYNC // ACTIVE
+        </div>
+      </div>
+    </div>
+
+
+    <div class="node n2">
+      <div class="node-head">
+        <span>COMMUNICATION // MAIL 02</span>
+        <span class="node-code">MX-02</span>
+      </div>
+
+      <div class="mail-row">
+        <div>
+          <span class="mail-num">02</span>
+          <span class="node-unit">NEW</span>
+        </div>
+
+        <div class="mail-meta">
+          <span class="priority">01 PRIORITY</span><br>
+          SYNC // ACTIVE
+        </div>
+      </div>
+    </div>
+
+
+    <div class="node n3">
+      <div class="node-head">
+        <span>COMMUNICATION // MAIL 03</span>
+        <span class="node-code">MX-03</span>
+      </div>
+
+      <div class="mail-row">
+        <div>
+          <span class="mail-num">02</span>
+          <span class="node-unit">NEW</span>
+        </div>
+
+        <div class="mail-meta">
+          00 PRIORITY<br>
+          SYNC // ACTIVE
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="analytics-numbers">
-    <div class="metric"><div class="metric-value">+18.2%</div><div class="metric-label">YT01 // 7D</div></div>
-    <div class="metric"><div class="metric-value">+7.4%</div><div class="metric-label">YT02 // 7D</div></div>
-    <div class="metric"><div class="metric-value">+24.9%</div><div class="metric-label">BEATSTARS // 7D</div></div>
+
+  <div class="readout">
+    <span>NEURAL NODES <b>64</b></span>
+    <span>LATENCY <b>14MS</b></span>
+    <span>DATA LINKS <b>06</b></span>
+    <span>AI STATE <b>READY</b></span>
   </div>
 
 </section>
 
-</div>
 
+<!-- ANALYTICS -->
+<section class="analytics-zone">
 
-<!-- LOWER -->
-<div class="lower-grid">
+  <div class="signal-panel">
 
-<section class="panel activity">
-  <div class="panel-head">
-    <span>INTELLIGENCE ACTIVITY LOG</span>
-    <span class="code">LIVE FEED</span>
+    <div class="panel-title">
+      <span>LIVE SIGNAL ANALYSIS // 7 DAY NETWORK ACTIVITY</span>
+      <span>ANL-X01</span>
+    </div>
+
+    <canvas id="mainChart"></canvas>
+
+    <div class="legend">
+      <span><i class="l1"></i>YOUTUBE 01</span>
+      <span><i class="l2"></i>YOUTUBE 02</span>
+      <span><i class="l3"></i>BEATSTARS</span>
+    </div>
+
   </div>
 
-  <div class="activity-row"><span class="time">20:44</span><span class="source">YT-01</span><span class="event">Subscriber event detected</span><span class="tag">LOGGED</span></div>
-  <div class="activity-row"><span class="time">19:31</span><span class="source">MX-01</span><span class="event">New studio inquiry received</span><span class="tag">PRIORITY</span></div>
-  <div class="activity-row"><span class="time">18:08</span><span class="source">BS-M01</span><span class="event">License transaction completed // €39.00</span><span class="tag">SALE</span></div>
-  <div class="activity-row"><span class="time">16:52</span><span class="source">YT-02</span><span class="event">View velocity increased +18%</span><span class="tag">SIGNAL</span></div>
-  <div class="activity-row"><span class="time">14:11</span><span class="source">SYSTEM</span><span class="event">All intelligence nodes synchronized</span><span class="tag">SECURE</span></div>
+
+  <div class="activity-panel">
+
+    <div class="panel-title">
+      <span>INTELLIGENCE FEED</span>
+      <span>LIVE</span>
+    </div>
+
+    <div class="event">
+      <span class="event-time">21:44</span>
+      <span class="event-source">YT-01</span>
+      <span class="event-text">Subscriber signal detected</span>
+    </div>
+
+    <div class="event">
+      <span class="event-time">21:31</span>
+      <span class="event-source">MX-01</span>
+      <span class="event-text">Studio inquiry received // priority</span>
+    </div>
+
+    <div class="event">
+      <span class="event-time">20:58</span>
+      <span class="event-source">BS-01</span>
+      <span class="event-text">License transaction // €39.00</span>
+    </div>
+
+    <div class="event">
+      <span class="event-time">19:42</span>
+      <span class="event-source">YT-02</span>
+      <span class="event-text">Audience velocity increased</span>
+    </div>
+
+    <div class="event">
+      <span class="event-time">18:10</span>
+      <span class="event-source">CORE</span>
+      <span class="event-text">Network synchronization complete</span>
+    </div>
+
+  </div>
+
 </section>
 
 
-<section class="panel brief">
-  <div class="panel-head">
-    <span>JARVIS // INTELLIGENCE BRIEF</span>
-    <span class="code">AI REPORT</span>
-  </div>
-
-  <div class="brief-text">
-    Good evening.<br><br>
-
-    Channel 01 is showing
-    <b>increased audience activity</b>.
-
-    BeatStars generated
-    <b>184 additional plays</b> during the current cycle.<br><br>
-
-    Three mail nodes are active.
-    Two messages require attention.<br><br>
-
-    Awaiting command.<span class="cursor"></span>
-  </div>
-</section>
-
-</div>
-
-
+<!-- COMMAND -->
 <div class="command">
+
   <span class="prompt">›_</span>
-  <input id="commandInput" placeholder="ENTER COMMAND // ASK JARVIS..." autocomplete="off">
-  <button class="mic">◉ VOICE</button>
-  <button class="execute" id="execute">EXECUTE</button>
+
+  <input
+    id="commandInput"
+    placeholder="ENTER COMMAND // ASK JARVIS..."
+    autocomplete="off"
+  >
+
+  <button class="cmd-button" id="voice">
+    ◉ VOICE
+  </button>
+
+  <button class="cmd-button" id="execute">
+    EXECUTE
+  </button>
+
 </div>
 
 </div>
 
 
 <script>
-/* CLOCK */
-function clock(){
+
+/* ======================================
+   CLOCK + GREETING
+====================================== */
+
+function updateClock(){
   document.getElementById("clock").textContent =
     new Date().toLocaleTimeString("de-DE",{hour12:false});
 }
-clock();
-setInterval(clock,1000);
 
-/* GREETING */
+updateClock();
+setInterval(updateClock,1000);
+
 const hour=new Date().getHours();
+
 document.getElementById("greeting").textContent =
   hour<12 ? "GOOD MORNING." :
   hour<18 ? "GOOD AFTERNOON." :
   "GOOD EVENING.";
 
-/* BOOT */
-const bootStatus=document.getElementById("bootStatus");
 
-setTimeout(()=>bootStatus.textContent="AUTHENTICATING OPERATOR...",500);
-setTimeout(()=>bootStatus.textContent="LOADING NEURAL INTELLIGENCE CORE...",1050);
-setTimeout(()=>bootStatus.textContent="ESTABLISHING SECURE DATA NODES...",1550);
-setTimeout(()=>bootStatus.textContent="ACCESS GRANTED // SYSTEM ONLINE",2050);
+/* ======================================
+   BOOT SEQUENCE
+====================================== */
+
+const bootText=document.getElementById("bootText");
 
 setTimeout(()=>{
-  document.getElementById("boot").classList.add("hidden");
-},2500);
+  bootText.textContent="VERIFYING OPERATOR IDENTITY...";
+},500);
+
+setTimeout(()=>{
+  bootText.textContent="ESTABLISHING ENCRYPTED DATA LINKS...";
+},1050);
+
+setTimeout(()=>{
+  bootText.textContent="INITIALIZING NEURAL MATRIX...";
+},1600);
+
+setTimeout(()=>{
+  bootText.textContent="JARVIS CORE ONLINE...";
+},2150);
+
+setTimeout(()=>{
+  bootText.textContent="ACCESS GRANTED.";
+},2550);
+
+setTimeout(()=>{
+  document.getElementById("boot").classList.add("off");
+},2950);
 
 
-/* ==============================
-   NEURAL NETWORK ANIMATION
-================================ */
+/* ======================================
+   BACKGROUND PARTICLE SYSTEM
+====================================== */
 
-const neuralCanvas=document.getElementById("neuralCanvas");
-const nctx=neuralCanvas.getContext("2d");
+const space=document.getElementById("space");
+const sctx=space.getContext("2d");
 
-let nodes=[];
-const NODE_COUNT=46;
+let particles=[];
+let mouse={x:0,y:0};
 
-function resizeNeural(){
-  const rect=neuralCanvas.getBoundingClientRect();
+function resizeSpace(){
+
   const dpr=window.devicePixelRatio||1;
 
-  neuralCanvas.width=rect.width*dpr;
-  neuralCanvas.height=rect.height*dpr;
+  space.width=innerWidth*dpr;
+  space.height=innerHeight*dpr;
+
+  space.style.width=innerWidth+"px";
+  space.style.height=innerHeight+"px";
+
+  sctx.setTransform(dpr,0,0,dpr,0,0);
+
+  particles=[];
+
+  for(let i=0;i<75;i++){
+
+    particles.push({
+      x:Math.random()*innerWidth,
+      y:Math.random()*innerHeight,
+      r:Math.random()*1.3+.25,
+      speed:Math.random()*.12+.03,
+      alpha:Math.random()*.35+.08
+    });
+
+  }
+
+}
+
+function drawSpace(){
+
+  sctx.clearRect(0,0,innerWidth,innerHeight);
+
+  particles.forEach(p=>{
+
+    p.y-=p.speed;
+
+    if(p.y<-10){
+      p.y=innerHeight+10;
+      p.x=Math.random()*innerWidth;
+    }
+
+    sctx.beginPath();
+    sctx.arc(
+      p.x + mouse.x*.004,
+      p.y + mouse.y*.004,
+      p.r,
+      0,
+      Math.PI*2
+    );
+
+    sctx.fillStyle=`rgba(255,146,0,${p.alpha})`;
+
+    sctx.shadowBlur=7;
+    sctx.shadowColor="#ff9200";
+
+    sctx.fill();
+
+  });
+
+  sctx.shadowBlur=0;
+
+  requestAnimationFrame(drawSpace);
+}
+
+resizeSpace();
+drawSpace();
+
+
+/* ======================================
+   PARALLAX
+====================================== */
+
+document.addEventListener("mousemove",e=>{
+
+  mouse.x=e.clientX-innerWidth/2;
+  mouse.y=e.clientY-innerHeight/2;
+
+  const core=document.getElementById("coreZone");
+
+  core.style.transform =
+    `translate(calc(-50% + ${mouse.x*.006}px),
+               calc(-50% + ${mouse.y*.006}px))`;
+
+});
+
+
+/* ======================================
+   NEURAL NETWORK
+====================================== */
+
+const neural=document.getElementById("neural");
+const nctx=neural.getContext("2d");
+
+let neurons=[];
+let pulses=[];
+
+function createNeural(){
+
+  const rect=neural.getBoundingClientRect();
+  const dpr=window.devicePixelRatio||1;
+
+  neural.width=rect.width*dpr;
+  neural.height=rect.height*dpr;
 
   nctx.setTransform(dpr,0,0,dpr,0,0);
 
-  nodes=[];
+  neurons=[];
 
-  for(let i=0;i<NODE_COUNT;i++){
-    nodes.push({
-      x:Math.random()*rect.width,
-      y:Math.random()*rect.height,
-      vx:(Math.random()-.5)*.28,
-      vy:(Math.random()-.5)*.28,
-      r:Math.random()*1.7+.7,
-      pulse:Math.random()*Math.PI*2
-    });
-  }
-
-  document.getElementById("nodeCount").textContent=NODE_COUNT;
-}
-
-function neuralAnimation(){
-  const rect=neuralCanvas.getBoundingClientRect();
-
-  nctx.clearRect(0,0,rect.width,rect.height);
-
-  /* faint radar rings */
   const cx=rect.width/2;
   const cy=rect.height/2;
 
-  nctx.strokeStyle="rgba(255,138,0,.045)";
-  nctx.lineWidth=1;
+  for(let i=0;i<64;i++){
 
-  [95,145,200].forEach(r=>{
-    nctx.beginPath();
-    nctx.arc(cx,cy,r,0,Math.PI*2);
-    nctx.stroke();
-  });
+    const angle=Math.random()*Math.PI*2;
+    const radius=115+Math.random()*170;
 
-  nodes.forEach(n=>{
+    neurons.push({
+      x:cx+Math.cos(angle)*radius,
+      y:cy+Math.sin(angle)*radius,
+      vx:(Math.random()-.5)*.16,
+      vy:(Math.random()-.5)*.16,
+      r:Math.random()*1.5+.5,
+      phase:Math.random()*Math.PI*2
+    });
+
+  }
+
+}
+
+function drawNeural(){
+
+  const rect=neural.getBoundingClientRect();
+
+  nctx.clearRect(0,0,rect.width,rect.height);
+
+  const cx=rect.width/2;
+  const cy=rect.height/2;
+
+  /* radial energy */
+  const glow=nctx.createRadialGradient(
+    cx,cy,40,
+    cx,cy,260
+  );
+
+  glow.addColorStop(0,"rgba(255,146,0,.09)");
+  glow.addColorStop(.45,"rgba(255,146,0,.025)");
+  glow.addColorStop(1,"rgba(255,146,0,0)");
+
+  nctx.fillStyle=glow;
+  nctx.fillRect(0,0,rect.width,rect.height);
+
+
+  neurons.forEach(n=>{
+
     n.x+=n.vx;
     n.y+=n.vy;
-    n.pulse+=.025;
+    n.phase+=.018;
 
-    if(n.x<0||n.x>rect.width)n.vx*=-1;
-    if(n.y<0||n.y>rect.height)n.vy*=-1;
+    const dx=n.x-cx;
+    const dy=n.y-cy;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+
+    if(dist>300 || dist<100){
+      n.vx*=-1;
+      n.vy*=-1;
+    }
+
   });
 
-  /* synapses */
-  for(let i=0;i<nodes.length;i++){
-    for(let j=i+1;j<nodes.length;j++){
 
-      const a=nodes[i];
-      const b=nodes[j];
+  /* SYNAPSES */
+
+  for(let i=0;i<neurons.length;i++){
+
+    for(let j=i+1;j<neurons.length;j++){
+
+      const a=neurons[i];
+      const b=neurons[j];
 
       const dx=a.x-b.x;
       const dy=a.y-b.y;
-      const dist=Math.sqrt(dx*dx+dy*dy);
 
-      if(dist<105){
+      const d=Math.sqrt(dx*dx+dy*dy);
 
-        const opacity=(1-dist/105)*.22;
+      if(d<82){
+
+        const opacity=(1-d/82)*.28;
 
         nctx.beginPath();
         nctx.moveTo(a.x,a.y);
         nctx.lineTo(b.x,b.y);
 
-        nctx.strokeStyle=`rgba(255,138,0,${opacity})`;
-        nctx.lineWidth=.7;
+        nctx.strokeStyle=
+          `rgba(255,146,0,${opacity})`;
+
+        nctx.lineWidth=.65;
         nctx.stroke();
+
       }
+
     }
+
   }
 
-  /* neurons */
-  nodes.forEach(n=>{
 
-    const glow=(Math.sin(n.pulse)+1)/2;
+  /* LINKS TO CORE */
+
+  neurons.forEach((n,index)=>{
+
+    if(index%7===0){
+
+      nctx.beginPath();
+      nctx.moveTo(n.x,n.y);
+      nctx.lineTo(cx,cy);
+
+      nctx.strokeStyle=
+        "rgba(255,146,0,.055)";
+
+      nctx.stroke();
+
+    }
+
+  });
+
+
+  /* NEURONS */
+
+  neurons.forEach(n=>{
+
+    const pulse=(Math.sin(n.phase)+1)/2;
 
     nctx.beginPath();
-    nctx.arc(n.x,n.y,n.r+glow*.7,0,Math.PI*2);
 
-    nctx.fillStyle=`rgba(255,170,55,${.45+glow*.45})`;
+    nctx.arc(
+      n.x,
+      n.y,
+      n.r+pulse*.7,
+      0,
+      Math.PI*2
+    );
 
-    nctx.shadowBlur=8+glow*7;
-    nctx.shadowColor="#ff8a00";
+    nctx.fillStyle=
+      `rgba(255,180,65,${.35+pulse*.6})`;
+
+    nctx.shadowBlur=6+pulse*8;
+    nctx.shadowColor="#ff9200";
 
     nctx.fill();
 
-    nctx.shadowBlur=0;
   });
 
-  requestAnimationFrame(neuralAnimation);
+  nctx.shadowBlur=0;
+
+  requestAnimationFrame(drawNeural);
+
 }
 
-resizeNeural();
-neuralAnimation();
+createNeural();
+drawNeural();
 
 
-/* ==============================
-   ANALYTICS CHART
-================================ */
+/* ======================================
+   MINI SIGNAL CHARTS
+====================================== */
 
-const chart=document.getElementById("analyticsChart");
-const ctx=chart.getContext("2d");
-
-let chartPhase=0;
-
-const series=[
-  [31,38,35,49,55,51,68,73,69,84,91,88,104],
-  [42,45,43,50,48,56,59,61,65,68,70,75,78],
-  [20,29,25,37,31,46,42,58,53,69,63,82,90]
+const datasets=[
+  [18,22,21,29,27,35,32,43,40,48,45,57,54,67],
+  [24,27,26,31,34,33,39,42,41,47,50,52,57,61],
+  [14,25,19,34,27,45,38,55,46,64,58,73,66,82]
 ];
 
-function drawChart(){
+document.querySelectorAll(".spark").forEach(canvas=>{
 
-  const rect=chart.getBoundingClientRect();
-  const dpr=window.devicePixelRatio||1;
+  const ctx=canvas.getContext("2d");
+  const data=datasets[canvas.dataset.set];
 
-  if(chart.width!==rect.width*dpr){
-    chart.width=rect.width*dpr;
-    chart.height=rect.height*dpr;
+  function draw(){
+
+    const rect=canvas.getBoundingClientRect();
+    const dpr=window.devicePixelRatio||1;
+
+    canvas.width=rect.width*dpr;
+    canvas.height=rect.height*dpr;
+
     ctx.setTransform(dpr,0,0,dpr,0,0);
-  }
 
-  ctx.clearRect(0,0,rect.width,rect.height);
-
-  /* grid */
-  ctx.strokeStyle="rgba(255,255,255,.045)";
-  ctx.lineWidth=1;
-
-  for(let i=1;i<5;i++){
-    const y=(rect.height/5)*i;
-
-    ctx.beginPath();
-    ctx.moveTo(0,y);
-    ctx.lineTo(rect.width,y);
-    ctx.stroke();
-  }
-
-  const colors=[
-    "#ff8a00",
-    "#747b76",
-    "#74ff9d"
-  ];
-
-  series.forEach((data,index)=>{
+    ctx.clearRect(0,0,rect.width,rect.height);
 
     ctx.beginPath();
 
     data.forEach((v,i)=>{
 
       const x=(rect.width/(data.length-1))*i;
-
-      const movement=
-        Math.sin(chartPhase+i*.7+index)*1.6;
-
-      const y=
-        rect.height-
-        ((v+movement)/115)*rect.height;
+      const y=rect.height-(v/90)*rect.height;
 
       if(i===0)ctx.moveTo(x,y);
       else ctx.lineTo(x,y);
+
     });
 
-    ctx.strokeStyle=colors[index];
-    ctx.lineWidth=index===0?1.8:1.1;
+    ctx.strokeStyle="#ff9200";
+    ctx.lineWidth=1.2;
 
-    if(index===0){
-      ctx.shadowBlur=8;
-      ctx.shadowColor="#ff8a00";
-    }
+    ctx.shadowBlur=7;
+    ctx.shadowColor="#ff9200";
 
     ctx.stroke();
+
     ctx.shadowBlur=0;
+
+  }
+
+  draw();
+
+});
+
+
+/* ======================================
+   MAIN ANALYTICS GRAPH
+====================================== */
+
+const mainChart=document.getElementById("mainChart");
+const mctx=mainChart.getContext("2d");
+
+const mainData=[
+  [28,34,31,43,40,52,49,63,59,72,68,81,89],
+  [35,38,37,42,45,48,52,51,58,61,64,67,72],
+  [20,27,24,36,31,45,41,57,51,67,62,79,86]
+];
+
+let chartTime=0;
+
+function drawMainChart(){
+
+  const rect=mainChart.getBoundingClientRect();
+  const dpr=window.devicePixelRatio||1;
+
+  if(
+    mainChart.width!==Math.floor(rect.width*dpr) ||
+    mainChart.height!==Math.floor(rect.height*dpr)
+  ){
+
+    mainChart.width=rect.width*dpr;
+    mainChart.height=rect.height*dpr;
+
+    mctx.setTransform(dpr,0,0,dpr,0,0);
+
+  }
+
+  mctx.clearRect(0,0,rect.width,rect.height);
+
+
+  /* GRID */
+
+  mctx.strokeStyle="rgba(255,255,255,.045)";
+  mctx.lineWidth=1;
+
+  for(let i=1;i<5;i++){
+
+    const y=(rect.height/5)*i;
+
+    mctx.beginPath();
+    mctx.moveTo(0,y);
+    mctx.lineTo(rect.width,y);
+    mctx.stroke();
+
+  }
+
+
+  const colors=[
+    "#ff9200",
+    "#858b87",
+    "#7dff9b"
+  ];
+
+
+  mainData.forEach((data,index)=>{
+
+    mctx.beginPath();
+
+    data.forEach((v,i)=>{
+
+      const x=
+        (rect.width/(data.length-1))*i;
+
+      const motion=
+        Math.sin(chartTime+i*.55+index)*1.2;
+
+      const y=
+        rect.height-
+        ((v+motion)/100)*rect.height;
+
+      if(i===0)mctx.moveTo(x,y);
+      else mctx.lineTo(x,y);
+
+    });
+
+    mctx.strokeStyle=colors[index];
+
+    mctx.lineWidth=
+      index===0 ? 1.8 : 1;
+
+    if(index===0){
+
+      mctx.shadowBlur=8;
+      mctx.shadowColor="#ff9200";
+
+    }
+
+    mctx.stroke();
+
+    mctx.shadowBlur=0;
 
   });
 
-  chartPhase+=.015;
 
-  requestAnimationFrame(drawChart);
+  /* MOVING SCAN LINE */
+
+  const scanX=
+    ((Math.sin(chartTime*.4)+1)/2)*rect.width;
+
+  mctx.beginPath();
+  mctx.moveTo(scanX,0);
+  mctx.lineTo(scanX,rect.height);
+
+  mctx.strokeStyle=
+    "rgba(255,146,0,.08)";
+
+  mctx.stroke();
+
+
+  chartTime+=.018;
+
+  requestAnimationFrame(drawMainChart);
+
 }
 
-drawChart();
+drawMainChart();
 
 
-/* COMMAND DEMO */
+/* ======================================
+   COMMAND INTERFACE
+====================================== */
 
-const commandInput=document.getElementById("commandInput");
+const input=
+  document.getElementById("commandInput");
 
-document.getElementById("execute").onclick=()=>{
-  if(!commandInput.value.trim())return;
+const execute=
+  document.getElementById("execute");
+
+execute.onclick=()=>{
+
+  if(!input.value.trim())return;
 
   alert(
-    "JARVIS NEURAL INTERFACE\n\nCOMMAND RECEIVED:\n"+
-    commandInput.value+
-    "\n\nAI CONNECTION WILL BE ACTIVATED IN A LATER BUILD."
+    "FOKUS // NEURAL INTERFACE\n\n"+
+    "COMMAND RECEIVED:\n"+
+    input.value+
+    "\n\n"+
+    "AI LANGUAGE CORE NOT YET CONNECTED."
   );
 
-  commandInput.value="";
+  input.value="";
+
 };
 
-commandInput.addEventListener("keydown",e=>{
+input.addEventListener("keydown",e=>{
+
   if(e.key==="Enter"){
-    document.getElementById("execute").click();
+    execute.click();
   }
+
 });
 
 
-/* RESIZE */
+/* VOICE PLACEHOLDER */
+
+document.getElementById("voice").onclick=()=>{
+
+  alert(
+    "VOICE ENGINE // STANDBY\n\n"+
+    "Speech interface will be connected to the AI core in the next build."
+  );
+
+};
+
+
+/* ======================================
+   RESIZE
+====================================== */
+
 window.addEventListener("resize",()=>{
-  resizeNeural();
+
+  resizeSpace();
+  createNeural();
+
 });
+
 </script>
 
 </body>
